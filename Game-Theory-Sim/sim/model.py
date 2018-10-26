@@ -28,6 +28,10 @@ def population_perfect_mixed(model):
     agent_strategies = [agent.strategy for agent in model.schedule.agents]
     return agent_strategies.count("Perfect Mixed")
 
+def population_imperfect_mixed(model):
+    agent_strategies = [agent.strategy for agent in model.schedule.agents]
+    return agent_strategies.count("Imperfect Mixed")
+
 
 
 class Model(Model):
@@ -50,7 +54,7 @@ class Model(Model):
                 self.grid.place_agent(a, (x, y))
 
         self.datacollector = DataCollector(
-            model_reporters={"Pure Rock": population_pure_rock, "Pure Paper": population_pure_paper, "Pure Scissors": population_pure_scissors, "Perfect Mixed": population_perfect_mixed},  # A function to call
+            model_reporters={"Pure Rock": population_pure_rock, "Pure Paper": population_pure_paper, "Pure Scissors": population_pure_scissors, "Perfect Mixed": population_perfect_mixed, "Imperfect Mixed": population_imperfect_mixed},  # A function to call
             agent_reporters={"Score": "score"})  # An agent attribute
 
     def kill_and_reproduce(self):
