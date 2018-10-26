@@ -40,6 +40,8 @@ chart = ChartModule([{"Label": "Pure Rock",
                      {"Label": "Imperfect Mixed",
                       "Color": "Green"}],
                     data_collector_name='datacollector')
+# making an irrelevant edit
+
 server = ModularServer(Model,
                        [grid, chart],
                        "Game Theory Simulator",
