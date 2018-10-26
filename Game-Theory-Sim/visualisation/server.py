@@ -2,7 +2,6 @@ from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
-from sim.model import Model
 
 
 n_slider = UserSettableParameter('slider', "Number of Agents", 100, 2, 200, 1)
@@ -22,6 +21,8 @@ def agent_portrayal(agent):
         portrayal["Color"] = "cyan"
     elif agent.strategy == "Perfect Mixed":
         portrayal["Color"] = "blue"
+    elif agent.strategy == "Imperfect Mixed":
+        portrayal["Color"] = "green"
     return portrayal
 
 
@@ -35,9 +36,10 @@ chart = ChartModule([{"Label": "Pure Rock",
                      {"Label": "Pure Scissors",
                       "Color": "Cyan"},
                      {"Label": "Perfect Mixed",
-                      "Color": "Blue"}],
+                      "Color": "Blue"},
+                     {"Label": "Imperfect Mixed",
+                      "Color": "Green"}],
                     data_collector_name='datacollector')
-
 server = ModularServer(Model,
                        [grid, chart],
                        "Game Theory Simulator",
