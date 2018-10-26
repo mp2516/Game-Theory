@@ -3,13 +3,12 @@ import random
 from itertools import combinations
 import math
 from utils.logger import logger
-
+import numpy as np
 
 def reverse_key(z):
     """
     Args:
         z: the integer hash value
-
     Returns:
         Inverted Cantor pair function of z to give x and y
     """
@@ -28,14 +27,13 @@ class Agent(Agent):
             1 beats 2 but loses to 3
             2 beats 3 but loses to 1
             3 beats 1 but loses to 2
-
         Score is the running total of the agents success.
         """
         super().__init__(unique_id, model)
         self.pos = reverse_key(self.unique_id)
         # FIXME: the play should be based on the strategy
         self.score = 0
-        self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed"])
+        self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed", "Imperfect Mixed"])
         # self.play = random.choice("Rock", "Paper", "Scissors")
         self.neighbours = []
         self.play = ""
@@ -85,6 +83,17 @@ class Agent(Agent):
                 if self.strategy == "Perfect Mixed":
                     self.play = random.choice(["Rock", "Paper", "Scissors"])
                 self.rock_paper_scissors(neighbour)
+            for _ in range(self.model.num_plays_per_set):
+                if self.strategy == "Imperfect Mixed":
+                    pr = 0.2 #probability of strategy picking rock
+                    pp = 0.3 #probability of strategy picking paper
+                    ps = 0.5 #probability of strategy picking scissors
+                    rand_weights = np.random.dirichlet(np.ones(3)).tolist() #random probability of given play
+                    self.play = random.choice(random.choices(
+                                population = ["Rock", "Paper", "Scissors"], 
+                                weights = [pr, pp, ps], # rand_weights would give random weightings
+                                k = 3
+                                ))
                 # self.evolution.evolve.mutate()
 
     def step(self):
