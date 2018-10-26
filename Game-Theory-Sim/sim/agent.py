@@ -82,9 +82,7 @@ class Agent(Agent):
             for _ in range(self.model.num_plays_per_set):
                 if self.strategy == "Perfect Mixed":
                     self.play = random.choice(["Rock", "Paper", "Scissors"])
-                self.rock_paper_scissors(neighbour)
-            for _ in range(self.model.num_plays_per_set):
-                if self.strategy == "Imperfect Mixed":
+                elif self.strategy == "Imperfect Mixed":
                     pr = 0.2 #probability of strategy picking rock
                     pp = 0.3 #probability of strategy picking paper
                     ps = 0.5 #probability of strategy picking scissors
@@ -94,6 +92,7 @@ class Agent(Agent):
                                 weights = [pr, pp, ps], # rand_weights would give random weightings
                                 k = 3
                                 ))
+                self.rock_paper_scissors(neighbour)
                 # self.evolution.evolve.mutate()
 
     def step(self):
