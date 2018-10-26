@@ -60,19 +60,38 @@ class Model(Model):
         score)
         :return:
         """
-        player_scores = [player.score for player in self.schedule.agents]
-        num_weak_players = sum(score < 0 for score in player_scores)
-        logger.debug("Player scores {}".format(player_scores))
+        # player_scores = [player.score for player in self.schedule.agents]
+        # logger.info("Player score sum {}".format(sum(player_scores)))
+        # num_weak_players = sum(score < -5 for score in player_scores)
+        # logger.debug("Player scores {}".format(player_scores))
+        #
+        # for i in range(num_weak_players):
+        #     logger.debug("Number of weak players {}, number of players {}".format(num_weak_players, len(player_scores)))
+        #     weakest_player = self.schedule.agents[np.argmin(player_scores)]
+        #     neighbour_scores = [neighbour.score for neighbour in weakest_player.neighbours]
+        #     strongest_neighbour = weakest_player.neighbours[np.argmax(neighbour_scores)]
+        #     # FIXME: Currently the strongest neighbour is not finding the correct answer
+        #     logger.debug("Weakest player {} with position {}, Strongest neighbour {}".format(weakest_player.score, weakest_player.pos, strongest_neighbour.score))
+        #     logger.debug("Neighbour positions {}".format([neighbour.score for neighbour in weakest_player.neighbours]))
+        #     # FIXME: On the second step the simulation crashes and the weakest_player cannot be found
+        #     # TODO: Check that this code does indeed remove the worst player
+        #     player_scores.remove(weakest_player.score)
+        #     weakest_player.strategy = strongest_neighbour.strategy
 
-        for i in range(num_weak_players):
-            weakest_player = self.schedule.agents[np.argmin(player_scores)]
-            strongest_neighbour = self.schedule.agents[np.argmax([neighbour.score for neighbour in weakest_player.neighbours])]
-            # FIXME: Currently the strongest neighbour is not finding the correct answer
-            logger.debug("Weakest player {} with position {}, Strongest neighbour {}".format(weakest_player.score, weakest_player.pos, strongest_neighbour.score))
-            # FIXME: On the second step the simulation crashes and the weakest_player cannot be found
-            # TODO: Check that this code does indeed remove the worst player
-            player_scores.remove(weakest_player.score)
+        weak_player_scores = [player.score for player in self.schedule.agents if player.score < -5]
+        weak_players = [player for player in self.schedule.agents if player.score < -5]
+
+        while weak_players:
+            weakest_player = weak_players[np.argmin(weak_player_scores)]
+            neighbour_scores = [neighbour.score for neighbour in weakest_player.neighbours]
+            strongest_neighbour = weakest_player.neighbours[np.argmax(neighbour_scores)]
+            logger.debug("Weakest player {} with position {}, Strongest neighbour {}".format(weakest_player.score,
+                                                                                             weakest_player.pos,
+                                                                                             strongest_neighbour.score))
+            logger.debug("Neighbour positions {}".format([neighbour.score for neighbour in weakest_player.neighbours]))
             weakest_player.strategy = strongest_neighbour.strategy
+            weak_player_scores.remove(weakest_player.score)
+            weak_players.remove(weakest_player)
 
     def step(self):
         self.kill_and_reproduce()

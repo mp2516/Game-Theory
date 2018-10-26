@@ -37,6 +37,7 @@ chart = ChartModule([{"Label": "Pure Rock",
                      {"Label": "Perfect Mixed",
                       "Color": "Blue"}],
                     data_collector_name='datacollector')
+
 server = ModularServer(Model,
                        [grid, chart],
                        "Game Theory Simulator",

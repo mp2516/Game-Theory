@@ -1,6 +1,23 @@
 from mesa import Agent
 import random
 from itertools import combinations
+import math
+from utils.logger import logger
+
+
+def reverse_key(z):
+    """
+    Args:
+        z: the integer hash value
+
+    Returns:
+        Inverted Cantor pair function of z to give x and y
+    """
+    w = math.floor((math.sqrt((8 * z) + 1) - 1) / 2)
+    t = (w ** 2 + w) / 2
+    y = z - t
+    x = w - y
+    return [int(x), int(y)]
 
 
 class Agent(Agent):
@@ -15,6 +32,7 @@ class Agent(Agent):
         Score is the running total of the agents success.
         """
         super().__init__(unique_id, model)
+        self.pos = reverse_key(self.unique_id)
         # FIXME: the play should be based on the strategy
         self.score = 0
         self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed"])
@@ -51,13 +69,10 @@ class Agent(Agent):
         Plays x rounds between agents of the game.
         :return: score of the agents
         """
-
-        self.neighbours =\
-            self.model.grid.get_neighbors(
-                pos=self.pos,
-                moore=True,
-                # when moore is True, diagonals are included
-                include_center=False)
+        # the neighbours need to be calculated here rather than __init__() otherwise the list is incomplete
+        self.neighbours = self.model.grid.get_neighbors(pos=self.pos, moore=True,
+                                                        # when moore is True, diagonals are included
+                                                        include_center=False)
         for neighbour in self.neighbours:
             # the pure strategies have the plays remaining unchanged so go outside the for loop
             if self.strategy == "Pure Rock":
@@ -73,4 +88,6 @@ class Agent(Agent):
                 # self.evolution.evolve.mutate()
 
     def step(self):
+        # reset scores
+        self.score = 0
         self.calculate_scores()
