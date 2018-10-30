@@ -1,5 +1,5 @@
 from visualisation.server import server
-from sim.model import Model
+from .sim.model import Model
 from tqdm import trange
 import matplotlib as plt
 

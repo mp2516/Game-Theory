@@ -1,8 +1,8 @@
 from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa import Model
-from mesa.time import BaseScheduler, RandomActivation
-from sim.agent import Agent
+from mesa.time import BaseScheduler, RandomActivation, SimultaneousActivation
+from .agent import RPSAgent
 import numpy as np
 from utils.logger import logger
 import random
@@ -13,11 +13,9 @@ def population_pure_rock(model):
     agent_strategies = [agent.strategy for agent in model.schedule.agents]
     return agent_strategies.count("Pure Rock")
 
-
 def population_pure_paper(model):
     agent_strategies = [agent.strategy for agent in model.schedule.agents]
     return agent_strategies.count("Pure Paper")
-
 
 def population_pure_scissors(model):
     agent_strategies = [agent.strategy for agent in model.schedule.agents]
@@ -33,8 +31,7 @@ def population_imperfect_mixed(model):
     return agent_strategies.count("Imperfect Mixed")
 
 
-
-class Model(Model):
+class RPSGrid(Model):
     """A model with some number of agents."""
     def __init__(self, N, width, height):
         self.num_agents = N
@@ -49,7 +46,7 @@ class Model(Model):
             for y in range(self.grid.height):
                 # using the Cantor pair function
                 unique_id = (0.5 * (x + y) * (x + y + 1)) + y
-                a = Agent(unique_id, self)
+                a = RPSAgent(unique_id, self)
                 self.schedule.add(a)
                 self.grid.place_agent(a, (x, y))
 
@@ -101,3 +98,63 @@ class Model(Model):
         self.kill_and_reproduce()
         self.datacollector.collect(self)
         self.schedule.step()
+
+
+class Grid(Model):
+    ''' Model class for iterated, spatial prisoner's dilemma model. '''
+
+    schedule_types = {"Sequential": BaseScheduler, "Random": RandomActivation, "Simultaneous": SimultaneousActivation}
+
+    # This dictionary holds the payoff for the agent that makes the first move in the key
+    # keyed on: (my_move, other_move)
+
+    payoff_PD = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 2, ("D", "D"): 0}
+
+    payoff_RPS = {("R", "R"): 0, ("R", "P"): -1, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0,
+                  ("P", "S"): -1, ("S", "R"): -1, ("S", "P"): 1, ("S", "S"): 0}
+
+    def __init__(self, height=50, width=50, schedule_type="Random", payoffs=None, seed=None):
+        '''
+        Create a new Spatial Game Model
+
+        Args:
+            height, width: Grid size. There will be one agent per grid cell.
+            schedule_type: Can be "Sequential", "Random", or "Simultaneous".
+                           Determines the agent activation regime.
+            payoffs: (optional) Dictionary of (move, neighbor_move) payoffs.
+        '''
+        self.grid = SingleGrid(height, width, torus=True)
+        self.schedule_type = schedule_type
+        self.schedule = self.schedule_types[self.schedule_type](self)
+        self.game = "RPS"
+
+        # Create agents
+        for x in range(width):
+            for y in range(height):
+                agent = Agent((x, y), self)
+                self.grid.place_agent(agent, (x, y))
+                self.schedule.add(agent)
+
+        if self.game == "PD":
+            self.datacollector = DataCollector(
+                {"Cooperating_Agents": lambda m: len([a for a in m.schedule.agents if a.move == "C"])})
+        elif self.game == "RPS":
+            self.datacollector = DataCollector(
+                {"Pure Rock": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Rock"]),
+                 "Pure Paper": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Paper"]),
+                 "Pure Scissors": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Scissors"]),
+                 "Perfect Mixed": lambda m: len([a for a in m.schedule.agents if a.strategy == "Perfect Mixed"]),
+                 "Imperfect Mixed": lambda m: len([a for a in m.schedule.agents if a.strategy == "Imperfect Mixed"])})
+
+        self.running = True
+        self.datacollector.collect(self)
+
+    def step(self):
+        self.schedule.step()
+        # collect data
+        self.datacollector.collect(self)
+
+    def run(self, n):
+        ''' Run the model for n steps. '''
+        for _ in range(n):
+            self.step()

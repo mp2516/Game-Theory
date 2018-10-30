@@ -26,7 +26,7 @@ def agent_portrayal(agent):
     return portrayal
 
 
-grid = CanvasGrid(agent_portrayal, 5, 5, 500, 500)
+grid = CanvasGrid(agent_portrayal, 10, 10, 500, 500)
 
 # it is essential the label matches that collected by the datacollector
 chart = ChartModule([{"Label": "Pure Rock",
@@ -40,9 +40,8 @@ chart = ChartModule([{"Label": "Pure Rock",
                      {"Label": "Imperfect Mixed",
                       "Color": "Green"}],
                     data_collector_name='datacollector')
-# making an irrelevant edit
 
 server = ModularServer(Model,
                        [grid, chart],
                        "Game Theory Simulator",
-                       {"N": n_slider, "width": 5, "height": 5})
+                       {"N": n_slider, "width": 10, "height": 10})

@@ -1,5 +1,5 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
-from utils.logger import logger
+from .logger import logger
 
 
 def convert_polygons(polygons):

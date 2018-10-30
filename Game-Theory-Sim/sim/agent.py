@@ -2,7 +2,7 @@ from mesa import Agent
 import random
 from itertools import combinations
 import math
-from utils.logger import logger
+from .utils.logger import logger
 import numpy as np
 
 def reverse_key(z):
@@ -19,18 +19,30 @@ def reverse_key(z):
     return [int(x), int(y)]
 
 
-class Agent(Agent):
-    def __init__(self, unique_id, model):
-        """
-        Play explanation:
-        1 - paper (red), 2 - rock (grey), 3 - scissors (cyan)
-            1 beats 2 but loses to 3
-            2 beats 3 but loses to 1
-            3 beats 1 but loses to 2
-        Score is the running total of the agents success.
-        """
-        super().__init__(unique_id, model)
-        self.pos = reverse_key(self.unique_id)
+class GameAgent(Agent):
+    def __init__(self, pos, model, starting_move=None):
+        super().__init__(pos, model)
+        self.pos = pos
+        self.score = 0
+        self.play = None
+        self.strategy = None
+        self.neighbours = []
+
+    def advance(self):
+        self.move = self.next_move
+        self.score += self.increment_score()
+
+    def increment_score(self):
+        neighbors = self.model.grid.get_neighbors(self.pos, True)
+        if self.model.schedule_type == "Simultaneous":
+            moves = [neighbor.next_move for neighbor in neighbors]
+        else:
+            moves = [neighbor.move for neighbor in neighbors]
+        return sum(self.model.payoff[(self.move, move)] for move in moves)
+
+class RPSAgent(GameAgent):
+    def __init__(self, pos, model, starting_move=None):
+        super.__init__(pos, model)
         # FIXME: the play should be based on the strategy
         self.score = 0
         self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed", "Imperfect Mixed"])
@@ -95,7 +107,60 @@ class Agent(Agent):
                 self.rock_paper_scissors(neighbour)
                 # self.evolution.evolve.mutate()
 
+    def increment_score(self):
+        neighbors = self.model.grid.get_neighbors(self.pos, True)
+        if self.model.schedule_type == "Simultaneous":
+            moves = [neighbor.next_move for neighbor in neighbors]
+        else:
+            moves = [neighbor.move for neighbor in neighbors]
+        return sum(self.model.payoff[(self.move, move)] for move in moves)
+
     def step(self):
-        # reset scores
-        self.score = 0
-        self.calculate_scores()
+        ''' Get the neighbors' moves, and change own move accordingly. '''
+        neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
+        best_neighbor = max(neighbors, key=lambda a: a.score)
+        self.next_move = best_neighbor.move
+
+        if self.model.schedule_type != "Simultaneous":
+            self.advance()
+
+    def advance(self):
+        self.move = self.next_move
+        self.score += self.increment_score()
+
+
+    class PDAgent(GameAgent):
+        ''' Agent member of the iterated, spatial prisoner's dilemma model. '''
+
+        def __init__(self, pos, model, starting_move=None):
+            '''
+            Create a new Prisoner's Dilemma agent.
+
+            Args:
+                pos: (x, y) tuple of the agent's position.
+                model: model instance
+                starting_move: If provided, determines the agent's initial state:
+                               C(ooperating) or D(efecting). Otherwise, random.
+            '''
+            super().__init__(pos, model)
+            self.pos = pos
+            self.score = 0
+            if starting_move:
+                self.move = starting_move
+            else:
+                self.move = random.choice(["C", "D"])
+
+            self.next_move = None
+
+        @property
+        def isCoorperating(self):
+            return self.move == "C"
+
+        def step(self):
+            ''' Get the neighbors' moves, and change own move accordingly. '''
+            neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
+            best_neighbor = max(neighbors, key=lambda a: a.score)
+            self.next_move = best_neighbor.move
+
+            if self.model.schedule_type != "Simultaneous":
+                self.advance()
