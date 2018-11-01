@@ -1,8 +1,7 @@
 from mesa import Agent
 import random
-from itertools import combinations
 import math
-from .utils.logger import logger
+from .logger import logger
 import numpy as np
 
 def reverse_key(z):
@@ -20,13 +19,14 @@ def reverse_key(z):
 
 
 class GameAgent(Agent):
-    def __init__(self, pos, model, starting_move=None):
+    def __init__(self, pos, model):
         super().__init__(pos, model)
+
         self.pos = pos
         self.score = 0
-        self.play = None
         self.strategy = None
         self.neighbours = []
+        self.move = None
 
     def advance(self):
         self.move = self.next_move
@@ -40,57 +40,42 @@ class GameAgent(Agent):
             moves = [neighbor.move for neighbor in neighbors]
         return sum(self.model.payoff[(self.move, move)] for move in moves)
 
+
 class RPSAgent(GameAgent):
-    def __init__(self, pos, model, starting_move=None):
+    def __init__(self, pos, model):
         super.__init__(pos, model)
-        # FIXME: the play should be based on the strategy
-        self.score = 0
-        self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed", "Imperfect Mixed"])
-        # self.play = random.choice("Rock", "Paper", "Scissors")
-        self.neighbours = []
-        self.play = ""
+        self.prob_r = 1/3
+        self.prob_p = 1/3
+        self.prob_s = 1/3
 
-    def combinations(self):
-        for combo in combinations([1, 2, 3], 2):
-            pass
-            # output is (1, 2), (1, 3), (2, 3)
+    def create_pure_strategies(self):
+        if self.strategy == "Pure Rock":
+            self.prob_r = 1
+        elif self.strategy == "Pure Paper":
+            self.prob_p = 1
+        elif self.strategy == "Pure Scissors":
+            self.prob_s = 1
 
-    def rock_paper_scissors(self, neighbour):
-        # TODO: Should be able to shorten code using combinatorics
-        # FIXME: the current sum of scores is non-zero
-        if self.play == "Paper":
-            if neighbour.play == "Rock":
-                self.score += 1
-            elif neighbour.play == "Scissors":
-                self.score -= 1
-        elif self.play == "Rock":
-            if neighbour.play == "Paper":
-                self.score -= 1
-            elif neighbour.play == "Scissors":
-                self.score += 1
-        elif self.play == "Scissors":
-            if neighbour.play == "Paper":
-                self.score += 1
-            elif neighbour.play == "Rock":
-                self.score -= 1
+    def create_strategies(self):
+        if self.RPSmodel.game_type == "Pure Only":
+            self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors")
+            self.create_pure_strategies()
+
+        elif self.RPSmodel.game_type == "Pure and Perfect":
+            self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed")
+            self.create_pure_strategies()
+            if self.strategy == "Perfect Mixed":
+                self.prob_r, self.prob_p, self.prob_s = 1/3, 1/3, 1/3
+
+        elif self.RPSmodel.game_type == "Imperfect":
+            self.strategy = "Imperfect Mixed"
+            self.prob_r, self.prob_p, self.prob_s = np.random.dirichlet([10, 10, 10])
+            rand_weights = np.random.dirichlet(np.ones(3)).tolist()  # random probability of given play
+            self.play = random.choice(random.choices(population=["R", "P", "S"], weights=[self.prob_r, self.prob_p, self.prob_s]))
+
+
 
     def calculate_scores(self):
-        """
-        Plays x rounds between agents of the game.
-        :return: score of the agents
-        """
-        # the neighbours need to be calculated here rather than __init__() otherwise the list is incomplete
-        self.neighbours = self.model.grid.get_neighbors(pos=self.pos, moore=True,
-                                                        # when moore is True, diagonals are included
-                                                        include_center=False)
-        for neighbour in self.neighbours:
-            # the pure strategies have the plays remaining unchanged so go outside the for loop
-            if self.strategy == "Pure Rock":
-                self.play = "Rock"
-            elif self.strategy == "Pure Paper":
-                self.play = "Paper"
-            elif self.strategy == "Pure Scissors":
-                self.play = "Scissors"
             for _ in range(self.model.num_plays_per_set):
                 if self.strategy == "Perfect Mixed":
                     self.play = random.choice(["Rock", "Paper", "Scissors"])
