@@ -1,7 +1,4 @@
 from visualisation.server import server
-from .sim.model import Model
-from tqdm import trange
-import matplotlib as plt
 
 # model = Model(50, 10, 10)
 # for i in trange(100):
