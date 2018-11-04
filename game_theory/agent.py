@@ -20,9 +20,11 @@ def reverse_key(z):
 
 class GameAgent(Agent):
     unique_id = 1
-    def __init__(self, pos, model, config):
+
+    def __init__(self, model, config):
+        super().__init__(GameAgent.unique_id, model)
         GameAgent.unique_id += 1
-        self.pos = pos
+        self.pos = reverse_key(self.unique_id)
         self.score = 0
         self.strategy = None
         self.neighbours = []
