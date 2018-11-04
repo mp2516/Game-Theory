@@ -1,0 +1,16 @@
+{
+  "system": {
+    "width": 10,
+    "height": 10
+  },
+  "run": {
+    "simulation": true,
+    "number_of_steps": 1000
+  },
+  "game": {
+    "game_type": "RPS",
+    "num_moves_per_set": 5,
+    "scheduler": "Random",
+    "game_mode": "Pure Only"
+  }
+}

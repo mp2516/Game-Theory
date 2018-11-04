@@ -1,4 +1,4 @@
-from visualisation.server import server
+from game_theory.server import server
 
 # model = Model(50, 10, 10)
 # for i in trange(100):

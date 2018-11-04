@@ -19,9 +19,9 @@ def reverse_key(z):
 
 
 class GameAgent(Agent):
-    def __init__(self, pos, model):
-        super().__init__(pos, model)
-
+    unique_id = 1
+    def __init__(self, pos, model, config):
+        GameAgent.unique_id += 1
         self.pos = pos
         self.score = 0
         self.strategy = None
@@ -41,9 +41,9 @@ class GameAgent(Agent):
         return sum(self.model.payoff[(self.move, move)] for move in moves)
 
 
-class RPSAgent(GameAgent):
-    def __init__(self, pos, model):
-        super.__init__(pos, model)
+class RPS_Agent(GameAgent):
+    def __init__(self, pos, model, config):
+        super().__init__(pos, model, config)
         self.prob_r = 1/3
         self.prob_p = 1/3
         self.prob_s = 1/3
@@ -57,25 +57,25 @@ class RPSAgent(GameAgent):
             self.prob_s = 1
 
     def create_strategies(self):
-        if self.RPSmodel.game_type == "Pure Only":
+        if self.model.game_mode == "Pure Only":
             self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors")
             self.create_pure_strategies()
 
-        elif self.RPSmodel.game_type == "Pure and Perfect":
+        elif self.model.game_mode == "Pure and Perfect":
             self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed")
             self.create_pure_strategies()
             if self.strategy == "Perfect Mixed":
                 self.prob_r, self.prob_p, self.prob_s = 1/3, 1/3, 1/3
 
-        elif self.RPSmodel.game_type == "Imperfect":
+        elif self.model.game_mode == "Imperfect":
             self.strategy = "Imperfect Mixed"
             self.prob_r, self.prob_p, self.prob_s = np.random.dirichlet([10, 10, 10])
-            rand_weights = np.random.dirichlet(np.ones(3)).tolist()  # random probability of given play
-            self.play = random.choice(random.choices(population=["R", "P", "S"], weights=[self.prob_r, self.prob_p, self.prob_s]))
+            # self.play = random.choice(random.choices(population=["R", "P", "S"], weights=[self.prob_r, self.prob_p, self.prob_s]))
 
 
 
     def calculate_scores(self):
+        for i in range(self.model.num_plays_per_set):
             for _ in range(self.model.num_plays_per_set):
                 if self.strategy == "Perfect Mixed":
                     self.play = random.choice(["Rock", "Paper", "Scissors"])
@@ -114,38 +114,38 @@ class RPSAgent(GameAgent):
         self.score += self.increment_score()
 
 
-    class PDAgent(GameAgent):
-        ''' Agent member of the iterated, spatial prisoner's dilemma model. '''
+class PD_Agent(GameAgent):
+    ''' Agent member of the iterated, spatial prisoner's dilemma model. '''
 
-        def __init__(self, pos, model, starting_move=None):
-            '''
-            Create a new Prisoner's Dilemma agent.
+    def __init__(self, pos, model, starting_move=None):
+        '''
+        Create a new Prisoner's Dilemma agent.
 
-            Args:
-                pos: (x, y) tuple of the agent's position.
-                model: model instance
-                starting_move: If provided, determines the agent's initial state:
-                               C(ooperating) or D(efecting). Otherwise, random.
-            '''
-            super().__init__(pos, model)
-            self.pos = pos
-            self.score = 0
-            if starting_move:
-                self.move = starting_move
-            else:
-                self.move = random.choice(["C", "D"])
+        Args:
+            pos: (x, y) tuple of the agent's position.
+            model: model instance
+            starting_move: If provided, determines the agent's initial state:
+                           C(ooperating) or D(efecting). Otherwise, random.
+        '''
+        super().__init__(pos, model)
+        self.pos = pos
+        self.score = 0
+        if starting_move:
+            self.move = starting_move
+        else:
+            self.move = random.choice(["C", "D"])
 
-            self.next_move = None
+        self.next_move = None
 
-        @property
-        def isCoorperating(self):
-            return self.move == "C"
+    @property
+    def isCoorperating(self):
+        return self.move == "C"
 
-        def step(self):
-            ''' Get the neighbors' moves, and change own move accordingly. '''
-            neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
-            best_neighbor = max(neighbors, key=lambda a: a.score)
-            self.next_move = best_neighbor.move
+    def step(self):
+        ''' Get the neighbors' moves, and change own move accordingly. '''
+        neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
+        best_neighbor = max(neighbors, key=lambda a: a.score)
+        self.next_move = best_neighbor.move
 
-            if self.model.schedule_type != "Simultaneous":
-                self.advance()
+        if self.model.schedule_type != "Simultaneous":
+            self.advance()
