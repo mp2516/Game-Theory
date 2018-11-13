@@ -38,6 +38,8 @@ scissors_list = []
 perf_mix_list = []
 imp_mix_list =[]
 counter = []
+end = 480
+
 
 
 class Model(Model):
@@ -89,24 +91,25 @@ class Model(Model):
         #     # TODO: Check that this code does indeed remove the worst player
         #     player_scores.remove(weakest_player.score)
         #     weakest_player.strategy = strongest_neighbour.strategy
-
-        weak_player_scores = [player.score for player in self.schedule.agents if player.score < -5]
-        weak_players = [player for player in self.schedule.agents if player.score < -5]
+        
+        if len(rock_list) != 0:
+            weak_player_scores = [player.score for player in self.schedule.agents if player.score < 5]
+            weak_players = [player for player in self.schedule.agents if player.score < 5]
         
 
-        while weak_players:
-            weakest_player = weak_players[np.argmin(weak_player_scores)]
-            neighbour_scores = [neighbour.score for neighbour in weakest_player.neighbours]
-            strongest_neighbour = weakest_player.neighbours[np.argmax(neighbour_scores)]
-# =============================================================================
-#             logger.debug("Weakest player {} with position {}, Strongest neighbour {}".format(weakest_player.score,
-#                                                                                              weakest_player.pos,
-#                                                                                              strongest_neighbour.score))
-#             logger.debug("Neighbour positions {}".format([neighbour.score for neighbour in weakest_player.neighbours]))
-# =============================================================================
-            weakest_player.strategy = strongest_neighbour.strategy #random.choice([neighbour.strategy for neighbour in weakest_player.neighbours])
-            weak_player_scores.remove(weakest_player.score)
-            weak_players.remove(weakest_player)
+            while weak_players:
+                weakest_player = weak_players[np.argmin(weak_player_scores)]
+                neighbour_scores = [neighbour.score for neighbour in weakest_player.neighbours]
+                strongest_neighbour = weakest_player.neighbours[np.argmax(neighbour_scores)]
+    # =============================================================================
+    #             logger.debug("Weakest player {} with position {}, Strongest neighbour {}".format(weakest_player.score,
+    #                                                                                              weakest_player.pos,
+    #                                                                                              strongest_neighbour.score))
+    #             logger.debug("Neighbour positions {}".format([neighbour.score for neighbour in weakest_player.neighbours]))
+    # =============================================================================
+                weakest_player.strategy = strongest_neighbour.strategy #random.choice([neighbour.strategy for neighbour in weakest_player.neighbours])
+                weak_player_scores.remove(weakest_player.score)
+                weak_players.remove(weakest_player)
     
     def strat_list(self):
         strat_list = [player.strategy for player in self.schedule.agents]
@@ -119,7 +122,7 @@ class Model(Model):
         
     def fft_analysis(self):
         counter.append(1)
-        if len(counter) == 480:
+        if len(counter) == end:
             
             r_ar = np.array(rock_list)            
             N = len(r_ar)
@@ -127,17 +130,16 @@ class Model(Model):
             x = np.linspace(0.0, 1.0/(2.0), int(N/2))            
             y = r_ar - np.mean(r_ar)
             yfft = scipy.fftpack.fft(y)
-            yf = 2/N * np.abs(yfft[0:np.int(N/8)])
-            xf = x[0:np.int(N/8)]
+            yf = 2/N * np.abs(yfft[0:np.int(N/4)])
+            xf = x[0:np.int(N/4)]
             
             plt.figure(1,)
-            plt.plot(xf, yf, label= 'Dominant frequency = ' + str(round(xf[np.argmax(yf)], 4))+ ' set^-1')
+            plt.plot(xf, yf, label= 'Dominant frequency = ' + str(round(xf[np.argmax(yf)], 4))+ ' $set^(-1)$')
             plt.xlabel('Frequency (set^-1)')
             plt.ylabel('FT of Population')
             plt.title('Rock Frequency Domain RPS')     
             plt.legend(loc='best')
-            print(np.argmax(yf))
-            print("Dominant frequecy >> ", xf[np.argmax(yf)])
+            
             
             plt.figure(2,)
             plt.plot(np.arange(N), r_ar)
@@ -145,14 +147,34 @@ class Model(Model):
             plt.ylabel('Rock population')
             plt.title('Rock population with sets')            
             plt.show()
+            
+            figure, tax = ternary.figure(scale=1.0)
+            tax.boundary()
+            tax.gridlines(multiple=0.2, color="black")
+            tax.set_title("Populations", fontsize=20)
+            tax.left_axis_label("Scissors", fontsize=20)
+            tax.right_axis_label("Paper", fontsize=20)
+            tax.bottom_axis_label("Rock", fontsize=20)
+            
+            r_list_norm = [i/(l * l) for i in rock_list]
+            p_list_norm = [i/(l * l) for i in paper_list]
+            s_list_norm = [i/(l * l) for i in scissors_list]
+            points = list(zip(r_list_norm, p_list_norm, s_list_norm))
+            
+            tax.plot(points, linewidth=2.0, label="Curve")
+            tax.ticks(axis='lbr', multiple=0.2, linewidth=1)
+            tax.legend()
+            tax.show()
                         
-        if len(counter) > 480:
+            print(np.argmax(yf))
+            print("Dominant frequecy >> ", xf[np.argmax(yf)])
+            
             raise "counter exceeded"
             
         
     def step(self):
-        self.kill_and_reproduce()        
-        self.datacollector.collect(self)        
+        self.kill_and_reproduce()     
+        self.datacollector.collect(self)   
         self.strat_list()
         self.fft_analysis()
         self.schedule.step()
