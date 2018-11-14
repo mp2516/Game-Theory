@@ -17,104 +17,73 @@ def reverse_key(z):
     x = w - y
     return [int(x), int(y)]
 
-
 class GameAgent(Agent):
     unique_id = 1
-
-    def __init__(self, model, config):
+    def __init__(self, model):
         super().__init__(GameAgent.unique_id, model)
         GameAgent.unique_id += 1
         self.pos = reverse_key(self.unique_id)
-        self.score = 0
-        self.strategy = None
+        # the length of this array is 8 as their are 8 neighbours for every agent
+        self.scores = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.total_scores = 0
+        self.move, self.next_move = None, None
         self.neighbours = []
-        self.move = None
+        self.probabilities = []
+        # an empty strategy
 
-    def advance(self):
-        self.move = self.next_move
-        self.score += self.increment_score()
+        if self.model.game_type == "RPS":
+            self.probabilities = [0, 0, 0]
 
-    def increment_score(self):
-        neighbors = self.model.grid.get_neighbors(self.pos, True)
-        if self.model.schedule_type == "Simultaneous":
-            moves = [neighbor.next_move for neighbor in neighbors]
-        else:
-            moves = [neighbor.move for neighbor in neighbors]
-        return sum(self.model.payoff[(self.move, move)] for move in moves)
+            if self.model.game_mode == "Pure Only":
+                self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors"])
+                if self.strategy == "Pure Rock":
+                    self.probabilities = [1, 0, 0]
+                elif self.strategy == "Pure Paper":
+                    self.probabilities = [0, 1, 0]
+                elif self.strategy == "Pure Scissors":
+                    self.probabilities = [0, 0, 1]
 
+            elif self.model.game_mode == "Pure and Perfect":
+                self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed"])
+                if self.strategy == "Pure Rock":
+                    self.probabilities = [1, 0, 0]
+                elif self.strategy == "Pure Paper":
+                    self.probabilities = [0, 1, 0]
+                elif self.strategy == "Pure Scissors":
+                    self.probabilities = [0, 0, 1]
+                elif self.strategy == "Perfect Mixed":
+                    self.probabilities = [1/3, 1/3, 1/3]
 
-class RPS_Agent(GameAgent):
-    def __init__(self, pos, model, config):
-        super().__init__(pos, model, config)
-        self.prob_r = 1/3
-        self.prob_p = 1/3
-        self.prob_s = 1/3
+            elif self.model.game_mode == "Imperfect":
+                self.strategy = "Imperfect Mixed"
+                self.probabilities = np.random.dirichlet([10, 10, 10])
 
-    def create_pure_strategies(self):
-        if self.strategy == "Pure Rock":
-            self.prob_r = 1
-        elif self.strategy == "Pure Paper":
-            self.prob_p = 1
-        elif self.strategy == "Pure Scissors":
-            self.prob_s = 1
+            self.moves = np.random.choice(a=["R", "P", "S"], size=self.model.num_moves_per_set, p=self.probabilities)
 
-    def create_strategies(self):
-        if self.model.game_mode == "Pure Only":
-            self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors")
-            self.create_pure_strategies()
+        elif self.model.game_type == "PD":
+            self.probabilities = [0, 0]
 
-        elif self.model.game_mode == "Pure and Perfect":
-            self.strategy = random.choice("Pure Rock", "Pure Paper", "Pure Scissors", "Perfect Mixed")
-            self.create_pure_strategies()
-            if self.strategy == "Perfect Mixed":
-                self.prob_r, self.prob_p, self.prob_s = 1/3, 1/3, 1/3
-
-        elif self.model.game_mode == "Imperfect":
-            self.strategy = "Imperfect Mixed"
-            self.prob_r, self.prob_p, self.prob_s = np.random.dirichlet([10, 10, 10])
-            # self.play = random.choice(random.choices(population=["R", "P", "S"], weights=[self.prob_r, self.prob_p, self.prob_s]))
-
-
-
-    def calculate_scores(self):
-        for i in range(self.model.num_plays_per_set):
-            for _ in range(self.model.num_plays_per_set):
-                if self.strategy == "Perfect Mixed":
-                    self.play = random.choice(["Rock", "Paper", "Scissors"])
-                elif self.strategy == "Imperfect Mixed":
-                    pr = 0.2 #probability of strategy picking rock
-                    pp = 0.3 #probability of strategy picking paper
-                    ps = 0.5 #probability of strategy picking scissors
-                    rand_weights = np.random.dirichlet(np.ones(3)).tolist() #random probability of given play
-                    self.play = random.choice(random.choices(
-                                population = ["Rock", "Paper", "Scissors"], 
-                                weights = [pr, pp, ps], # rand_weights would give random weightings
-                                k = 3
-                                ))
-                self.rock_paper_scissors(neighbour)
-                # self.evolution.evolve.mutate()
-
-    def increment_score(self):
-        neighbors = self.model.grid.get_neighbors(self.pos, True)
-        if self.model.schedule_type == "Simultaneous":
-            moves = [neighbor.next_move for neighbor in neighbors]
-        else:
-            moves = [neighbor.move for neighbor in neighbors]
-        return sum(self.model.payoff[(self.move, move)] for move in moves)
+            if self.model.game_mode == "Pure Only":
+                self.strategy = random.choice(["Pure Cooperating", "Pure Defecting"])
+                if self.strategy == "Pure Cooperating":
+                    self.probabilities = [1, 0]
+                elif self.strategy == "Pure Defecting":
+                    self.probabilities = [0, 1]
+            self.moves = np.random.choice(a=["C", "D"], size=self.model.num_moves_per_set, p=self.probabilities)
 
     def step(self):
         ''' Get the neighbors' moves, and change own move accordingly. '''
-        neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
-        best_neighbor = max(neighbors, key=lambda a: a.score)
-        self.next_move = best_neighbor.move
+        self.increment_score()
 
-        if self.model.schedule_type != "Simultaneous":
-            self.advance()
-
-    def advance(self):
-        self.move = self.next_move
-        self.score += self.increment_score()
-
+    def increment_score(self):
+        self.neighbours = self.model.grid.get_neighbors(self.pos, True, include_center=False)
+        neighbours_moves = [neighbour.moves for neighbour in self.neighbours]
+        score = 0
+        for j in range(len(neighbours_moves)):
+            for i in range(self.model.num_moves_per_set):
+                score += (sum(self.model.payoff[self.moves[i], move[i]] for move in neighbours_moves[j]))
+            self.scores[j] = score
+        self.total_scores = sum(self.scores)
 
 class PD_Agent(GameAgent):
     ''' Agent member of the iterated, spatial prisoner's dilemma model. '''
@@ -148,6 +117,4 @@ class PD_Agent(GameAgent):
         neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
         best_neighbor = max(neighbors, key=lambda a: a.score)
         self.next_move = best_neighbor.move
-
-        if self.model.schedule_type != "Simultaneous":
-            self.advance()
+        self.advance()

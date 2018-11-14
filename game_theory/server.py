@@ -1,10 +1,10 @@
-from mesa.visualization.modules import CanvasGrid
-from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import ChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule, ChartVisualization
+from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
 from mesa.visualization.UserParam import UserSettableParameter
 from .config import Config
-from .model import RPS_Model, PD_Model
+from .model import RPS_Model, PD_Model, GameGrid
 from colour import Color
+from .logger import logger
 
 file_name = "game_theory/game_configs/rock_paper_scissors.json"
 
@@ -12,32 +12,58 @@ with open(file_name) as d:
     model_config = Config(d.read())
 
 
-model_height = model_config.system['height']
-model_width = model_config.system['width']
-game_type = model_config.game['game_type']
+model_height = 10
+model_width = 10
+game_type = "RPS"
+game_mode = "Imperfect"
+num_moves_per_set = 1
+cull_threshold = 0.45
+probability_adoption = 0.9
+strength_of_adoption = 0.1
+probability_mutation = 0.05
 
 
-def agent_portrayal(agent):
-    # opacity should be a number between 0-1
-    opacity = agent.score / max([agent.score for agent in agent.schedule.agents])
+class SimpleCanvas(VisualizationElement):
+    local_includes = ['simple_continuous_canvas.js']
+    portrayal_method = None
 
-    portrayal = {"Shape": "circle",
-                 "Filled": "true",
-                 "Layer": 0,
-                 "r": 0.5,
-                 "opacity": opacity}
+    def __init__(self, portrayal_method, num_agents_edge, canvas_size):
+        super().__init__()
+        self.portrayal_method = portrayal_method
+        self.num_agents_edge = num_agents_edge
+        self.canvas_size = canvas_size
 
-    if game_type == "RPS":
-        strategy_to_colour = {"Pure Rock": Color("red"), "Pure Paper": Color("green"), "Pure Scissors": Color("blue")}
+        canvas_config = dict(CANVAS_SIZE=self.canvas_size,
+                             NUM_AGENTS_EDGE=self.num_agents_edge)
 
-    elif game_type == "PD":
-        strategy_to_colour = {"Cooperating": Color("red"), "Defecting": Color("green")}
+        new_element = ("new Simple_Continuous_Module({})".format(canvas_config))
+        self.js_code = "elements.push(" + new_element + ");"
 
-    for strategy, colour in strategy_to_colour:
-        if agent.strategy == strategy:
-            portrayal["Color"] = colour
+    def render(self, model):
+        space_state = []
+        self.render_agents(model, space_state)
 
-    return portrayal
+        return space_state
+
+    def render_agents(self, model, space_state):
+        for agent in model.agent_schedule.agents:
+            self.render_agent(agent, space_state)
+
+    def render_agent(self, agent, space_state):
+        # opacity should be a number between 0-1
+
+        portrayal = {"Shape": "rect", "w": 1, "h": 1, "Filled": "true", "Layer": 0}
+
+        if game_type == "RPS":
+            agent_prob = agent.probabilities
+
+        elif game_type == "PD":
+            # in order to make the list 3 x 1 which ensures it fits into the RBG format
+            agent_prob = agent.probabilities.append(0)
+
+        rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
+        agent_colour = Color(rgb=rbg_colours)
+        portrayal["Color"] = agent_colour.hex
 
 
 grid = CanvasGrid(agent_portrayal, model_width, model_height, 500, 500)
@@ -47,19 +73,34 @@ if game_type == "RPS":
     chart = ChartModule([{"Label": "Pure Rock",
                           "Color": "Red"},
                          {"Label": "Pure Paper",
-                          "Color": "Grey"},
+                          "Color": "green"},
                          {"Label": "Pure Scissors",
-                          "Color": "Cyan"},
+                          "Color": "blue"},
                          {"Label": "Perfect Mixed",
-                          "Color": "Blue"},
+                          "Color": "purple"},
                          {"Label": "Imperfect Mixed",
-                          "Color": "Green"}],
+                          "Color": "dark purple"}],
                         data_collector_name='datacollector')
 elif game_type == "PD":
-    chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Grey"}],
+    chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}],
                         data_collector_name='datacollector')
 
-server = ModularServer(RPS_Model,
-                       [grid, chart],
+model_params = {
+    'width': model_width,
+    'height': model_height,
+    'num_moves_per_set': num_moves_per_set,
+    'game_type': game_type,
+    'game_mode': game_mode,
+    'cull_threshold': cull_threshold,
+    'probability_adoption': probability_adoption,
+    'strength_of_adoption': strength_of_adoption,
+    'probability_mutation': probability_mutation
+}
+
+server = ModularServer(GameGrid,
+                       [grid],
                        "Game Theory Simulator",
-                       {"config": model_config})
+                        model_params)
+server.verbose = False
+
+logger.critical("Started server.")
