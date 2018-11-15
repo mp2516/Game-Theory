@@ -32,7 +32,6 @@ class GameAgent(Agent):
         # an empty strategy
 
         if self.model.game_type == "RPS":
-            self.probabilities = [0, 0, 0]
 
             if self.model.game_mode == "Pure Only":
                 self.strategy = random.choice(["Pure Rock", "Pure Paper", "Pure Scissors"])
@@ -61,7 +60,6 @@ class GameAgent(Agent):
             self.moves = np.random.choice(a=["R", "P", "S"], size=self.model.num_moves_per_set, p=self.probabilities)
 
         elif self.model.game_type == "PD":
-            self.probabilities = [0, 0]
 
             if self.model.game_mode == "Pure Only":
                 self.strategy = random.choice(["Pure Cooperating", "Pure Defecting"])
@@ -78,37 +76,24 @@ class GameAgent(Agent):
 
     def implement_strategies(self):
         if self.model.game_type == "RPS":
-            self.probabilities = [0, 0, 0]
-
-            if self.model.game_mode == "Pure Only":
-                if self.strategy == "Pure Rock":
-                    self.probabilities = [1, 0, 0]
-                elif self.strategy == "Pure Paper":
-                    self.probabilities = [0, 1, 0]
-                elif self.strategy == "Pure Scissors":
-                    self.probabilities = [0, 0, 1]
-
-            elif self.model.game_mode == "Pure and Perfect":
-                if self.strategy == "Pure Rock":
-                    self.probabilities = [1, 0, 0]
-                elif self.strategy == "Pure Paper":
-                    self.probabilities = [0, 1, 0]
-                elif self.strategy == "Pure Scissors":
-                    self.probabilities = [0, 0, 1]
-                elif self.strategy == "Perfect Mixed":
-                    self.probabilities = [1/3, 1/3, 1/3]
+            if self.strategy == "Pure Rock":
+                self.probabilities = [1, 0, 0]
+            elif self.strategy == "Pure Paper":
+                self.probabilities = [0, 1, 0]
+            elif self.strategy == "Pure Scissors":
+                self.probabilities = [0, 0, 1]
+            elif self.strategy == "Perfect Mixed":
+                self.probabilities = [1/3, 1/3, 1/3]
+            elif self.strategy == "Imperfect Mixed":
+                self.probabilities = [prob / sum(self.probabilities) for prob in self.probabilities]
 
             self.moves = np.random.choice(a=["R", "P", "S"], size=self.model.num_moves_per_set, p=self.probabilities)
 
         elif self.model.game_type == "PD":
-            self.probabilities = [0, 0]
-
-            if self.model.game_mode == "Pure Only":
-                self.strategy = random.choice(["Pure Cooperating", "Pure Defecting"])
-                if self.strategy == "Pure Cooperating":
-                    self.probabilities = [1, 0]
-                elif self.strategy == "Pure Defecting":
-                    self.probabilities = [0, 1]
+            if self.strategy == "Pure Cooperating":
+                self.probabilities = [1, 0]
+            elif self.strategy == "Pure Defecting":
+                self.probabilities = [0, 1]
             self.moves = np.random.choice(a=["C", "D"], size=self.model.num_moves_per_set, p=self.probabilities)
 
     def increment_score(self):

@@ -12,17 +12,6 @@ with open(file_name) as d:
     model_config = Config(d.read())
 
 
-# model_height = 10
-# model_width = 10
-# game_type = "RPS"
-# game_mode = "Imperfect"
-# num_moves_per_set = 1
-# cull_threshold = 0.45
-# probability_adoption = 0.9
-# strength_of_adoption = 0.1
-# probability_mutation = 0.05
-
-
 class SimpleCanvas(VisualizationElement):
     local_includes = ['simple_continuous_canvas.js']
     portrayal_method = None
@@ -61,10 +50,10 @@ def agent_portrayal(agent):
     if model_config.game_type == "RPS":
         agent_prob = agent.probabilities
 
-    elif model_config.game_type == "PD":
+    if model_config.game_type == "PD":
         # in order to make the list 3 x 1 which ensures it fits into the RBG format
-        agent_prob = agent.probabilities.append(0)
-        print(agent.probabilities)
+        agent_prob = [0, 1, 0]
+        # agent_prob = agent.probabilities.append(0)
 
     rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
     agent_colour = Color(rgb=rbg_colours)

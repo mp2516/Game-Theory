@@ -3,12 +3,12 @@
   "height": 30,
   "simulation": true,
   "number_of_steps": 1000,
-  "game_type": "RPS",
+  "game_type": "PD",
   "num_moves_per_set": 3,
-  "game_mode": "Pure and Perfect",
+  "game_mode": "Pure Only",
   "cull_threshold": 0.5,
-  "probability_adoption": 1,
-  "strength_of_adoption": 1,
+  "probability_adoption": 0.5,
+  "strength_of_adoption": 0.5,
   "probability_mutation": 0.01,
   "strength_of_mutation": 0.01
 }

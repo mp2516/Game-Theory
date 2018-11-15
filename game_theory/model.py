@@ -118,7 +118,6 @@ class GameGrid(Model):
                             # with the strength_of_adoption dictating how much it tends towards
                             bad_agent.probabilities[num] = i + ((j - i) * self.strength_of_adoption)
                 elif self.game_mode == "Pure Only" or self.game_mode == "Pure and Perfect":
-                    # logger.debug("Replacing the bad agent {} with strategy {} with the {} strategy of its strongest neighbour".format(bad_agent.unique_id, bad_agent.strategy, strongest_neighbour.strategy))
                     bad_agent.strategy = strongest_neighbour.strategy
 
 
