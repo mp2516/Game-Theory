@@ -1,16 +1,14 @@
 {
-  "system": {
-    "width": 10,
-    "height": 10
-  },
-  "run": {
-    "simulation": true,
-    "number_of_steps": 1000
-  },
-  "game": {
-    "game_type": "RPS",
-    "num_moves_per_set": 5,
-    "scheduler": "Random",
-    "game_mode": "Pure Only"
-  }
+  "width": 30,
+  "height": 30,
+  "simulation": true,
+  "number_of_steps": 1000,
+  "game_type": "PD",
+  "num_moves_per_set": 3,
+  "game_mode": "Pure Only",
+  "cull_threshold": 1,
+  "probability_adoption": 1,
+  "strength_of_adoption": 1,
+  "probability_mutation": 0.01,
+  "strength_of_mutation": 0.01
 }

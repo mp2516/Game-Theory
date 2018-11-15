@@ -4,16 +4,16 @@ import cProfile
 import sys
 
 import numpy as np
-import scipy
+import scipy.fftpack
 from matplotlib import pyplot as plt
 import ternary
 
 from tqdm import trange
-from game_theory.model import GameAgent
+from game_theory.model import GameGrid
 
 
-def fft_analysis():
-    all_population_data = GameAgent.datacollector_populations.get_model_vars_dataframe()
+def fft_analysis(model):
+    all_population_data = model.datacollector_populations.get_model_vars_dataframe()
     # surprisingly this iterates over columns, not rows
     for population_data in all_population_data:
         N = len(population_data)
@@ -35,9 +35,10 @@ def fft_analysis():
         plt.ylabel('Population')
 
     plt.show()
+    print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
 
 
-def ternary_plot():
+def ternary_plot(model):
     figure, tax = ternary.figure(scale=1.0)
     tax.boundary()
     tax.gridlines(multiple=0.2, color="black")
@@ -46,9 +47,9 @@ def ternary_plot():
     tax.right_axis_label("Paper", fontsize=20)
     tax.bottom_axis_label("Rock", fontsize=20)
 
-    r_list_norm = [i / (l * l) for i in rock_list]
-    p_list_norm = [i / (l * l) for i in paper_list]
-    s_list_norm = [i / (l * l) for i in scissors_list]
+    r_list_norm = [i / (model.height ** 2) for i in rock_list]
+    p_list_norm = [i / (model.height ** 2) for i in paper_list]
+    s_list_norm = [i / (model.height ** 2) for i in scissors_list]
     points = list(zip(r_list_norm, p_list_norm, s_list_norm))
 
     tax.plot(points, linewidth=2.0, label="Curve")
@@ -56,19 +57,16 @@ def ternary_plot():
     tax.legend()
     tax.show()
 
-    print(np.argmax(yf))
-    print("Dominant frequecy >> ", xf[np.argmax(yf)])
-
 
 
 def run_model(config, n):
-    model = GameAgent(config)
+    model = GameGrid(config)
     for _ in trange(n):
         model.step()
     print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
 
-    fft_analysis()
-    # ternary_plot()
+    fft_analysis(model)
+    ternary_plot(model)
 
     for agent in model.schedule.agents:
         print("ID: {id}\n"
@@ -77,17 +75,17 @@ def run_model(config, n):
             id=agent.unique_id,
             average_score=agent.total_score))
 
-if len(sys.argv) > 1:
-    file_name = "game_configs/rock_paper_scissors.json"
-    with open(file_name) as d:
-        model_config = Config(d.read())
-
-    number_of_steps = int(sys.argv[1])
-
-    if len(sys.argv) > 2:
-        cProfile.run('run_model(model_config, number_of_steps)')
-    else:
-        run_model(model_config, number_of_steps)
+# if len(sys.argv) > 1:
+#     file_name = "game_configs/rock_paper_scissors.json"
+#     with open(file_name) as d:
+#         model_config = Config(d.read())
+#
+#     number_of_steps = int(sys.argv[1])
+#
+#     if len(sys.argv) > 2:
+#         cProfile.run('run_model(model_config, number_of_steps)')
+#     else:
+#         run_model(model_config, number_of_steps)
 
 
 server.port = 8521 # The default

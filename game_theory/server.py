@@ -2,7 +2,7 @@ from mesa.visualization.modules import CanvasGrid, ChartModule, ChartVisualizati
 from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
 from mesa.visualization.UserParam import UserSettableParameter
 from .config import Config
-from .model import RPS_Model, PD_Model, GameGrid
+from .model import GameGrid
 from colour import Color
 from .logger import logger
 
@@ -12,15 +12,15 @@ with open(file_name) as d:
     model_config = Config(d.read())
 
 
-model_height = 10
-model_width = 10
-game_type = "RPS"
-game_mode = "Imperfect"
-num_moves_per_set = 1
-cull_threshold = 0.45
-probability_adoption = 0.9
-strength_of_adoption = 0.1
-probability_mutation = 0.05
+# model_height = 10
+# model_width = 10
+# game_type = "RPS"
+# game_mode = "Imperfect"
+# num_moves_per_set = 1
+# cull_threshold = 0.45
+# probability_adoption = 0.9
+# strength_of_adoption = 0.1
+# probability_mutation = 0.05
 
 
 class SimpleCanvas(VisualizationElement):
@@ -49,7 +49,6 @@ class SimpleCanvas(VisualizationElement):
         space_state.append(portrayal)
 
 
-
 def agent_portrayal(agent):
     # opacity should be a number between 0-1
 
@@ -59,12 +58,13 @@ def agent_portrayal(agent):
                  "Filled": "true",
                  "Layer": 0}
 
-    if game_type == "RPS":
+    if model_config.game_type == "RPS":
         agent_prob = agent.probabilities
 
-    elif game_type == "PD":
+    elif model_config.game_type == "PD":
         # in order to make the list 3 x 1 which ensures it fits into the RBG format
         agent_prob = agent.probabilities.append(0)
+        print(agent.probabilities)
 
     rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
     agent_colour = Color(rgb=rbg_colours)
@@ -73,11 +73,11 @@ def agent_portrayal(agent):
     return portrayal
 
 
-grid = CanvasGrid(agent_portrayal, model_width, model_height, 500, 500)
+grid = CanvasGrid(agent_portrayal, model_config.width, model_config.height, 500, 500)
 
 # it is essential the label matches that collected by the datacollector
-if game_type == "RPS":
-    if game_mode == "Pure Only" or game_mode == "Pure and Perfect":
+if model_config.game_type == "RPS":
+    if model_config.game_mode == "Pure Only" or model_config.game_mode == "Pure and Perfect":
         chart = ChartModule([{"Label": "Pure Rock",
                               "Color": "red"},
                              {"Label": "Pure Paper",
@@ -86,42 +86,16 @@ if game_type == "RPS":
                               "Color": "blue"},
                              {"Label": "Perfect Mixed",
                               "Color": "black"}],
-                            data_collector_name='datacollector_population')
+                            data_collector_name='datacollector_populations')
+        server = ModularServer(GameGrid, [grid, chart], "Rock Paper Scissors Simulator", {"config": model_config})
+    else:
+        server = ModularServer(GameGrid, [grid], "Rock Paper Scissors Simulator", {"config": model_config})
 
-        fourier = ChartModule([{"Label": "Pure Rock",
-                              "Color": "red"},
-                             {"Label": "Pure Paper",
-                              "Color": "green"},
-                             {"Label": "Pure Scissors",
-                              "Color": "blue"},
-                             {"Label": "Perfect Mixed",
-                              "Color": "black"}],
-                            data_collector_name='datacollector')
-
-elif game_type == "PD":
+elif model_config.game_type == "PD":
     chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}],
                         data_collector_name='datacollector')
+    server = ModularServer(GameGrid, [grid, chart], "Prisoners Dilemma Simulator", {"config": model_config})
 
-model_params = {
-    'width': model_width,
-    'height': model_height,
-    'num_moves_per_set': num_moves_per_set,
-    'game_type': game_type,
-    'game_mode': game_mode,
-    'cull_threshold': cull_threshold,
-    'probability_adoption': probability_adoption,
-    'strength_of_adoption': strength_of_adoption,
-    'probability_mutation': probability_mutation
-}
-
-if game_mode == "Pure Only" or game_mode == "Pure and Perfect":
-    server = ModularServer(GameGrid,
-                       [grid, chart, fourier],
-                       "Game Theory Simulator",
-                        model_params)
-
-else:
-    server = ModularServer(GameGrid, [grid], "Game Theory Simulator", model_params)
 server.verbose = False
 
 logger.critical("Started server.")

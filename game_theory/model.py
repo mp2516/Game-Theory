@@ -1,8 +1,8 @@
 from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
-from mesa import Model, Agent
+from mesa import Model
 from mesa.time import BaseScheduler, RandomActivation, SimultaneousActivation
-from .agent import GameAgent, PD_Agent
+from .agent import GameAgent
 import numpy as np
 import random
 from .logger import logger
@@ -21,7 +21,7 @@ class GameGrid(Model):
     payoff_RPS = {("R", "R"): 0, ("R", "P"): -1, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0,
                   ("P", "S"): -1, ("S", "R"): -1, ("S", "P"): 1, ("S", "S"): 0}
 
-    def __init__(self, height, width, num_moves_per_set=5, game_type="RPS", game_mode="Pure Only", cull_threshold = 0.45, probability_adoption = 0.9, strength_of_adoption = 0.1, probability_mutation = 0.05):
+    def __init__(self, config):
         '''
         Create a new Spatial Game Model
 
@@ -32,19 +32,23 @@ class GameGrid(Model):
             game_mode: The mode of that game to play
             cull_threshold: The percentage of the population that will mutate their strategy to a better one (if it exists) each step
         '''
-        self.height = height
-        self.width = width
+        self.height = config.height
+        self.width = config.width
         self.grid = SingleGrid(self.height, self.width, torus=True)
-        self.num_moves_per_set = num_moves_per_set
-        self.game_type = game_type
+
+        self.num_moves_per_set = config.num_moves_per_set
+        self.game_type = config.game_type
+        self.game_mode = config.game_mode
+
+        self.cull_threshold = config.cull_threshold
+        self.num_agents_cull = int(self.cull_threshold * self.height * self.width)
+        self.probability_adoption = config.probability_adoption
+        self.strength_of_adoption = config.strength_of_adoption
+        self.probability_mutation = config.probability_mutation
+        self.strength_of_mutation = config.strength_of_mutation
+
         self.schedule = RandomActivation(self)
         self.running = True
-        self.game_mode = game_mode
-        self.cull_threshold = cull_threshold
-        self.probability_adoption = probability_adoption
-        self.strength_of_adoption = strength_of_adoption
-        self.probability_mutation = probability_mutation
-        self.num_agents_cull = int(self.cull_threshold * self.height * self.width)
 
         if self.game_type == "RPS":
             self.payoff = self.payoff_RPS
@@ -64,8 +68,8 @@ class GameGrid(Model):
                 self.datacollector_populations = DataCollector(
                     {"Pure Rock": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Pure Rock"),
                      "Pure Paper": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Pure Paper"),
-                     "Pure Scissors": lambda m: sum([1 for a in m.schedule.agents if a.strategy == "Pure Scissors"]),
-                     "Perfect Mixed": lambda m: sum([1 for a in m.schedule.agents if a.strategy == "Perfect Mixed"])})
+                     "Pure Scissors": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Pure Scissors"),
+                     "Perfect Mixed": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Perfect Mixed")})
                 self.datacollector_populations.collect(self)
 
             elif self.game_mode == "Imperfect":
@@ -86,8 +90,8 @@ class GameGrid(Model):
                     self.schedule.add(agent)
 
             self.datacollector_populations = DataCollector(
-                {"Cooperating": lambda m: sum([1 for a in m.schedule.agents if a.strategy == "Pure Cooperating"]),
-                 "Defecting": lambda m: sum([1 for a in m.schedule.agents if a.strategy == "Pure Defecting"])})
+                {"Cooperating": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Pure Cooperating"),
+                 "Defecting": lambda m: sum(1 for a in m.schedule.agents if a.strategy == "Pure Defecting")})
             self.datacollector_populations.collect(self)
 
 
@@ -114,6 +118,7 @@ class GameGrid(Model):
                             # with the strength_of_adoption dictating how much it tends towards
                             bad_agent.probabilities[num] = i + ((j - i) * self.strength_of_adoption)
                 elif self.game_mode == "Pure Only" or self.game_mode == "Pure and Perfect":
+                    # logger.debug("Replacing the bad agent {} with strategy {} with the {} strategy of its strongest neighbour".format(bad_agent.unique_id, bad_agent.strategy, strongest_neighbour.strategy))
                     bad_agent.strategy = strongest_neighbour.strategy
 
 
@@ -129,44 +134,3 @@ class GameGrid(Model):
         ''' Run the model for n steps. '''
         for _ in range(n):
             self.step()
-
-
-class RPS_Model(GameGrid):
-    def __init__(self, game_mode):
-        super().__init__()
-        self.payoff = self.payoff_RPS
-        self.game_mode = game_mode
-
-        # Create agents
-        for x in range(self.width):
-            for y in range(self.height):
-                agent = GameAgent(self)
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
-
-        self.datacollector = DataCollector(
-            {"Pure Rock": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Rock"]),
-             "Pure Paper": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Paper"]),
-             "Pure Scissors": lambda m: len([a for a in m.schedule.agents if a.strategy == "Pure Scissors"]),
-             "Perfect Mixed": lambda m: len([a for a in m.schedule.agents if a.strategy == "Perfect Mixed"]),
-             "Imperfect Mixed": lambda m: len([a for a in m.schedule.agents if a.strategy == "Imperfect Mixed"])})
-
-        self.datacollector.collect(self)
-
-class PD_Model(GameGrid):
-    def __init__(self, config):
-        super().__init__(config)
-        self.payoff = self.payoff_PD
-
-        # Create agents
-        for x in range(self.width):
-            for y in range(self.height):
-                agent = PD_Agent((x, y), self)
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
-
-        self.datacollector = DataCollector(
-            {"Cooperating": lambda m: len([a for a in m.schedule.agents if a.strategy == "C"]),
-             "Defecting": lambda m: len([a for a in m.schedule.agents if a.strategy == "D"])})
-
-        self.datacollector.collect(self)
