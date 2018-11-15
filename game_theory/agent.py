@@ -24,7 +24,7 @@ class GameAgent(Agent):
         GameAgent.unique_id += 1
         self.pos = reverse_key(self.unique_id)
         # the length of this array is 8 as their are 8 neighbours for every agent
-        self.scores = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.scores = [0, 0, 0, 0, 0, 0, 0, 0]
         self.total_scores = 0
         self.move, self.next_move = None, None
         self.neighbours = []

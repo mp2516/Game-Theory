@@ -77,7 +77,7 @@ grid = CanvasGrid(agent_portrayal, model_width, model_height, 500, 500)
 
 # it is essential the label matches that collected by the datacollector
 if game_type == "RPS":
-    if game_mode == "Pure Only":
+    if game_mode == "Pure Only" or game_mode == "Pure and Perfect":
         chart = ChartModule([{"Label": "Pure Rock",
                               "Color": "red"},
                              {"Label": "Pure Paper",
@@ -114,10 +114,14 @@ model_params = {
     'probability_mutation': probability_mutation
 }
 
-server = ModularServer(GameGrid,
+if game_mode == "Pure Only" or game_mode == "Pure and Perfect":
+    server = ModularServer(GameGrid,
                        [grid, chart, fourier],
                        "Game Theory Simulator",
                         model_params)
+
+else:
+    server = ModularServer(GameGrid, [grid], "Game Theory Simulator", model_params)
 server.verbose = False
 
 logger.critical("Started server.")

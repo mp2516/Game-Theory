@@ -5,7 +5,7 @@ import sys
 
 import numpy as np
 import scipy
-import matplotlib as plt
+from matplotlib import pyplot as plt
 import ternary
 
 from tqdm import trange
@@ -78,7 +78,7 @@ def run_model(config, n):
             average_score=agent.total_score))
 
 if len(sys.argv) > 1:
-    file_name = 
+    file_name = "game_configs/rock_paper_scissors.json"
     with open(file_name) as d:
         model_config = Config(d.read())
 
