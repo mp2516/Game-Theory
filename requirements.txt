@@ -1,4 +1,7 @@
 mesa
 numpy
+scipy
 colour
 matplotlib
+python-ternary
+tqdm

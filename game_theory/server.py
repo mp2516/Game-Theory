@@ -27,14 +27,9 @@ class SimpleCanvas(VisualizationElement):
     local_includes = ['simple_continuous_canvas.js']
     portrayal_method = None
 
-    def __init__(self, portrayal_method, num_agents_edge, canvas_size):
+    def __init__(self, portrayal_method):
         super().__init__()
         self.portrayal_method = portrayal_method
-        self.num_agents_edge = num_agents_edge
-        self.canvas_size = canvas_size
-
-        canvas_config = dict(CANVAS_SIZE=self.canvas_size,
-                             NUM_AGENTS_EDGE=self.num_agents_edge)
 
         new_element = ("new Simple_Continuous_Module({})".format(canvas_config))
         self.js_code = "elements.push(" + new_element + ");"
@@ -50,37 +45,59 @@ class SimpleCanvas(VisualizationElement):
             self.render_agent(agent, space_state)
 
     def render_agent(self, agent, space_state):
-        # opacity should be a number between 0-1
+        portrayal = self.portrayal_method(agent)
+        space_state.append(portrayal)
 
-        portrayal = {"Shape": "rect", "w": 1, "h": 1, "Filled": "true", "Layer": 0}
 
-        if game_type == "RPS":
-            agent_prob = agent.probabilities
 
-        elif game_type == "PD":
-            # in order to make the list 3 x 1 which ensures it fits into the RBG format
-            agent_prob = agent.probabilities.append(0)
+def agent_portrayal(agent):
+    # opacity should be a number between 0-1
 
-        rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
-        agent_colour = Color(rgb=rbg_colours)
-        portrayal["Color"] = agent_colour.hex
+    portrayal = {"Shape": "rect",
+                 "w": 1,
+                 "h": 1,
+                 "Filled": "true",
+                 "Layer": 0}
+
+    if game_type == "RPS":
+        agent_prob = agent.probabilities
+
+    elif game_type == "PD":
+        # in order to make the list 3 x 1 which ensures it fits into the RBG format
+        agent_prob = agent.probabilities.append(0)
+
+    rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
+    agent_colour = Color(rgb=rbg_colours)
+    portrayal["Color"] = agent_colour.hex
+
+    return portrayal
 
 
 grid = CanvasGrid(agent_portrayal, model_width, model_height, 500, 500)
 
 # it is essential the label matches that collected by the datacollector
 if game_type == "RPS":
-    chart = ChartModule([{"Label": "Pure Rock",
-                          "Color": "Red"},
-                         {"Label": "Pure Paper",
-                          "Color": "green"},
-                         {"Label": "Pure Scissors",
-                          "Color": "blue"},
-                         {"Label": "Perfect Mixed",
-                          "Color": "purple"},
-                         {"Label": "Imperfect Mixed",
-                          "Color": "dark purple"}],
-                        data_collector_name='datacollector')
+    if game_mode == "Pure Only":
+        chart = ChartModule([{"Label": "Pure Rock",
+                              "Color": "red"},
+                             {"Label": "Pure Paper",
+                              "Color": "green"},
+                             {"Label": "Pure Scissors",
+                              "Color": "blue"},
+                             {"Label": "Perfect Mixed",
+                              "Color": "black"}],
+                            data_collector_name='datacollector_population')
+
+        fourier = ChartModule([{"Label": "Pure Rock",
+                              "Color": "red"},
+                             {"Label": "Pure Paper",
+                              "Color": "green"},
+                             {"Label": "Pure Scissors",
+                              "Color": "blue"},
+                             {"Label": "Perfect Mixed",
+                              "Color": "black"}],
+                            data_collector_name='datacollector')
+
 elif game_type == "PD":
     chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}],
                         data_collector_name='datacollector')
@@ -98,7 +115,7 @@ model_params = {
 }
 
 server = ModularServer(GameGrid,
-                       [grid],
+                       [grid, chart, fourier],
                        "Game Theory Simulator",
                         model_params)
 server.verbose = False
