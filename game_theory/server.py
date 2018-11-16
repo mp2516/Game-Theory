@@ -7,7 +7,6 @@ from colour import Color
 from .logger import logger
 
 file_name = "game_theory/game_configs/rock_paper_scissors.json"
-
 with open(file_name) as d:
     model_config = Config(d.read())
 
@@ -50,14 +49,11 @@ def agent_portrayal(agent):
     if model_config.game_type == "RPS":
         agent_prob = agent.probabilities
 
-    if model_config.game_type == "PD":
+    elif model_config.game_type == "PD":
         # in order to make the list 3 x 1 which ensures it fits into the RBG format
-        agent_prob = [0, 1, 0]
-        # agent_prob = agent.probabilities.append(0)
+        agent_prob = agent.probabilities.append(0)
 
-    rbg_colours = [rbg / max(agent_prob) for rbg in agent_prob]
-    agent_colour = Color(rgb=rbg_colours)
-    portrayal["Color"] = agent_colour.hex
+    portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
 
     return portrayal
 

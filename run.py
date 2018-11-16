@@ -1,63 +1,13 @@
-from game_theory.server import server
+from game_theory.server import server, file_name
 
 import cProfile
 import sys
 
-import numpy as np
-import scipy.fftpack
-from matplotlib import pyplot as plt
-import ternary
-
 from tqdm import trange
 from game_theory.model import GameGrid
+from game_theory.config import Config
 
-
-def fft_analysis(model):
-    all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-    # surprisingly this iterates over columns, not rows
-    for population_data in all_population_data:
-        N = len(population_data)
-        t_axis = np.linspace(0.0, 1.0 / (2.0), (int(N) / 2))
-        y_axis = population_data - np.mean(population_data)
-        y_axis_fft = scipy.fftpack.fft(y_axis)
-        y_corrected = 2 / N * np.abs(y_axis_fft[0:np.int(N / 4)])
-        t_corrected = t_axis[0:np.int(N / 4)]
-
-        plt.figure(1)
-        plt.plot(t_corrected, y_corrected, label='Dominant frequency = ' + str(round(t_corrected[np.argmax(y_corrected)], 4)) + ' $set^(-1)$')
-        plt.xlabel('Frequency (set^-1)')
-        plt.ylabel('FT of Population')
-        plt.legend(loc='best')
-
-        plt.figure(2, )
-        plt.plot(np.arange(N), population_data)
-        plt.xlabel('Set no')
-        plt.ylabel('Population')
-
-    plt.show()
-    print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
-
-
-def ternary_plot(model):
-    figure, tax = ternary.figure(scale=1.0)
-    tax.boundary()
-    tax.gridlines(multiple=0.2, color="black")
-    tax.set_title("Populations", fontsize=20)
-    tax.left_axis_label("Scissors", fontsize=20)
-    tax.right_axis_label("Paper", fontsize=20)
-    tax.bottom_axis_label("Rock", fontsize=20)
-
-    r_list_norm = [i / (model.height ** 2) for i in rock_list]
-    p_list_norm = [i / (model.height ** 2) for i in paper_list]
-    s_list_norm = [i / (model.height ** 2) for i in scissors_list]
-    points = list(zip(r_list_norm, p_list_norm, s_list_norm))
-
-    tax.plot(points, linewidth=2.0, label="Curve")
-    tax.ticks(axis='lbr', multiple=0.2, linewidth=1)
-    tax.legend()
-    tax.show()
-
-
+from game_theory.analysis import fft_analysis, ternary_plot
 
 def run_model(config, n):
     model = GameGrid(config)
@@ -66,27 +16,25 @@ def run_model(config, n):
     print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
 
     fft_analysis(model)
-    ternary_plot(model)
+    if config.game_mode == "Pure Only":
+        labels = ["Pure Rock", "Pure Paper", "Pure Scissors"]
+        ternary_plot(model, labels)
+    elif config.game_type == "Imperfect":
+        labels = ["P(Rock)", "P(Paper)", "P(Scissors)"]
+        ternary_plot(model, labels)
 
     for agent in model.schedule.agents:
         print("ID: {id}\n"
               "Average Score: {average_score}\n"
               "---------------------------".format(
             id=agent.unique_id,
-            average_score=agent.total_score))
+            average_score=agent.total_scores))
 
-# if len(sys.argv) > 1:
-#     file_name = "game_configs/rock_paper_scissors.json"
-#     with open(file_name) as d:
-#         model_config = Config(d.read())
-#
-#     number_of_steps = int(sys.argv[1])
-#
-#     if len(sys.argv) > 2:
-#         cProfile.run('run_model(model_config, number_of_steps)')
-#     else:
-#         run_model(model_config, number_of_steps)
+with open(file_name) as d:
+    model_config = Config(d.read())
 
-
-server.port = 8521 # The default
-server.launch()
+if model_config.simulation:
+    server.port = 8521  # The default
+    server.launch()
+else:
+    run_model(model_config, model_config.number_of_steps)

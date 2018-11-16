@@ -95,39 +95,11 @@ class GameGrid(Model):
             self.datacollector_populations.collect(self)
 
 
-    def kill_and_reproduce(self):
-        """
-        Identifies the bottom 50% of poorly performing players and eliminates them from the pool.
-        The strategies of these weak_players are replaced by the strongest_neighbour (the neighbour with the biggest
-        score)
-        :return:
-        """
-        agents = [player for player in self.schedule.agents]
-        # sorts the list in ascending order by the total score of the agent
-        agents_sorted = sorted(agents, key=lambda a: a.total_scores)
-        worst_agents = agents_sorted[:self.num_agents_cull]
-
-        for bad_agent in worst_agents:
-            strongest_neighbour = bad_agent.neighbours[np.argmax(bad_agent.scores)]
-
-            if random.random() <= self.probability_adoption:
-                if self.game_mode == "Imperfect":
-                    for num, i in enumerate(bad_agent.probabilities):
-                        for j in strongest_neighbour.probabilities:
-                            # the bad_agents probabilities will tend towards the probabilities of the strongest_neighbour
-                            # with the strength_of_adoption dictating how much it tends towards
-                            bad_agent.probabilities[num] = i + ((j - i) * self.strength_of_adoption)
-                elif self.game_mode == "Pure Only" or self.game_mode == "Pure and Perfect":
-                    bad_agent.strategy = strongest_neighbour.strategy
-
-
     def step(self):
         self.schedule.step()
         # collect data
         if self.game_mode == "Pure Only" or self.game_mode == "Pure and Perfect":
             self.datacollector_populations.collect(self)
-        self.kill_and_reproduce()
-
 
     def run(self, n):
         ''' Run the model for n steps. '''
