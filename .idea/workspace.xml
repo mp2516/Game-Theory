@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b6a6ab10-70d2-412f-b219-1c2a481edd50" name="Default Changelist" comment="" />
+    <list default="true" id="b6a6ab10-70d2-412f-b219-1c2a481edd50" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,144 +19,179 @@
     <session id="-1537923317">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="13" />
-          <entry key="project.open.time.0" value="3" />
+          <entry key="project.closed" value="26" />
+          <entry key="project.open.time.0" value="4" />
+          <entry key="project.open.time.1" value="5" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.12" value="2" />
-          <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.12" value="3" />
+          <entry key="project.open.time.16" value="1" />
+          <entry key="project.open.time.17" value="2" />
+          <entry key="project.open.time.18" value="1" />
+          <entry key="project.open.time.2" value="2" />
+          <entry key="project.open.time.20" value="1" />
+          <entry key="project.open.time.24" value="1" />
+          <entry key="project.open.time.3" value="2" />
+          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.5" value="1" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="3" />
-          <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="16" />
+          <entry key="project.open.time.8" value="4" />
+          <entry key="project.open.time.9" value="4" />
+          <entry key="project.opened" value="36" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="js" value="1" />
-          <entry key="py" value="10" />
+          <entry key="gitignore" value="1" />
+          <entry key="ini" value="1" />
+          <entry key="js" value="2" />
+          <entry key="json" value="2" />
+          <entry key="md" value="2" />
+          <entry key="py" value="21" />
+          <entry key="txt" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JavaScript" value="1" />
-          <entry key="Python" value="10" />
+          <entry key="JSON" value="2" />
+          <entry key="JavaScript" value="2" />
+          <entry key="Markdown" value="2" />
+          <entry key="PLAIN_TEXT" value="4" />
+          <entry key="Python" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="dummy" value="16" />
+          <entry key="ini" value="52" />
           <entry key="js" value="50" />
-          <entry key="py" value="9592" />
-          <entry key="txt" value="216" />
+          <entry key="json" value="627" />
+          <entry key="md" value="390" />
+          <entry key="py" value="25736" />
+          <entry key="txt" value="1179" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
+          <entry key="Ini" value="52" />
+          <entry key="JSON" value="627" />
           <entry key="JavaScript" value="50" />
-          <entry key="PLAIN_TEXT" value="216" />
-          <entry key="Python" value="9592" />
+          <entry key="Markdown" value="390" />
+          <entry key="PLAIN_TEXT" value="1195" />
+          <entry key="Python" value="25736" />
         </counts>
       </usages-collector>
-      <usages-collector id="statistics.vcs.git.usages" />
+      <usages-collector id="statistics.vcs.git.usages">
+        <counts>
+          <entry key="git.branch.create.new" value="1" />
+        </counts>
+      </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/__init__.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/run.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/game_theory/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="18" selection-start-column="18" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/SimpleContinuousModule.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="146">
-              <caret line="67" column="19" selection-start-line="67" selection-start-column="19" selection-end-line="67" selection-end-column="19" />
+            <state relative-caret-position="171">
+              <caret line="66" column="33" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
               <folding>
-                <element signature="e#0#72#0" expanded="true" />
+                <element signature="e#0#82#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/simple_continuous_canvas.js">
+        <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1717">
-              <caret line="113" column="36" selection-start-line="113" selection-start-column="36" selection-end-line="113" selection-end-column="36" />
+            <state relative-caret-position="1496">
+              <caret line="87" column="50" lean-forward="true" selection-start-line="87" selection-start-column="50" selection-end-line="87" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py">
+        <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/ModularVisualization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1530">
-              <caret line="90" column="22" selection-start-line="90" selection-start-column="22" selection-end-line="90" selection-end-column="22" />
+            <state relative-caret-position="4964">
+              <caret line="301" column="8" selection-start-line="301" selection-start-column="8" selection-end-line="301" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game_theory/agent.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="103">
+              <caret line="98" column="56" selection-start-line="98" selection-start-column="56" selection-end-line="98" selection-end-column="56" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
-                <marker date="1540546724839" expanded="true" signature="405:407" ph="..." />
-                <marker date="1540546724839" expanded="true" signature="1168:1287" ph="..." />
+                <marker date="1542290258345" expanded="true" signature="3054:4653" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/sim/model.py">
+        <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/UserParam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1">
-              <caret line="62" selection-start-line="62" selection-end-line="78" selection-end-column="68" />
+            <state relative-caret-position="1462">
+              <caret line="86" column="8" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game_theory/simple_continuous_canvas.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game_theory/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="96">
+              <caret line="107" column="59" selection-start-line="107" selection-start-column="59" selection-end-line="107" selection-end-column="59" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
-                <marker date="1540546626371" expanded="true" signature="848:978" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/utils/logger.py">
+        <entry file="file://$PROJECT_DIR$/game_theory/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
+            <state>
+              <caret lean-forward="true" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="571">
-              <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
-              <folding>
-                <element signature="e#0#49#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py">
+        <entry file="file://$PROJECT_DIR$/requirements.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="102">
+              <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -163,34 +205,61 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>height</find>
+      <find>EXCLUDE_LIST</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Game-Theory-Sim/run.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/utils/logger.py" />
-        <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/model.py" />
-        <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/visualisation/server.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/visualisation/simple_continuous_canvas.js" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/visualisation/SimpleContinuousModule.py" />
-        <option value="$PROJECT_DIR$/Game-Theory-Sim/visualisation/server.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/run.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/model.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/requirements.txt" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/agent.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/server.py" />
+        <option value="$PROJECT_DIR$/Game-Theory-Sim/model.py" />
+        <option value="$PROJECT_DIR$/game_theory/rps.ini" />
+        <option value="$PROJECT_DIR$/game_theory/config.py" />
+        <option value="$PROJECT_DIR$/game_theory/SimpleContinuousModule.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/ModularVisualization.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/game_theory/model.py" />
+        <option value="$PROJECT_DIR$/game_theory/agent.py" />
+        <option value="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" />
+        <option value="$PROJECT_DIR$/game_theory/server.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1585" />
-    <option name="width" value="1630" />
-    <option name="height" value="1715" />
+    <option name="x" value="-15" />
+    <option name="y" value="-15" />
+    <option name="width" value="3233" />
+    <option name="height" value="1733" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -201,31 +270,13 @@
             <path>
               <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
               <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
+              <item name="game_theory" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
               <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
-              <item name="evolution" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
-              <item name="sim" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
-              <item name="visualisation" type="462c0819:PsiDirectoryNode" />
+              <item name="game_theory" type="462c0819:PsiDirectoryNode" />
+              <item name="game_configs" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
@@ -235,10 +286,18 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Game-Theory-Sim/evolution" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Triton-Tinder-Bot" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory" />
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory\Game-Theory-Sim" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -261,11 +320,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\18072\anaconda\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Game-Theory-Sim" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Game-Theory-Sim/run.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -328,7 +387,70 @@
       <option name="project" value="LOCAL" />
       <updated>1540548760186</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Test commit branch mark">
+      <created>1540568763795</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1540568763796</updated>
+    </task>
+    <task id="LOCAL-00005" summary="General clean-up of classes and functions. Addition of Prisoner's Dilemma.">
+      <created>1540906371195</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1540906371195</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Moved sim files and updated README.md">
+      <created>1541084676702</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1541084676702</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Moved files and updated README.md">
+      <created>1541085553386</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1541085553386</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Overhaul in file structure&#10;Organised class structure much better between model.py and agent.py with a superclass containing many of the generic game-play&#10;Introduced config files to allow for server-side manipulation and input of game">
+      <created>1541371368732</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1541371368732</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Updated .gitignore to include workspace.xml">
+      <created>1541372079380</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1541372079380</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Mutations are more random and evolution is less sudden. Agents play more intelligently">
+      <created>1542217143003</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1542217143003</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Added plotting capabilities and batch-running in run.py">
+      <created>1542274002642</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1542274002642</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Debugged to visualise imperfect strategies">
+      <created>1542283573551</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1542283573551</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -342,20 +464,21 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1293" height="693" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4973545" visible="true" weight="0.1518283" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4973545" visible="true" weight="0.16136725" />
       <window_info id="Structure" order="1" sideWeight="0.5026455" side_tool="true" weight="0.24960254" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5023847" visible="true" weight="0.6927176" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49920508" weight="0.32827735" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.67808217" visible="true" weight="0.27353463" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39964476" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.035523977" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49947312" weight="0.20043337" />
       <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.49761525" side_tool="true" visible="true" weight="0.6927176" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.3219178" side_tool="true" weight="0.18418202" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -369,7 +492,16 @@
     <MESSAGE value="Added pure and mixed strategies. Currently debugging kill_and_reproduce." />
     <MESSAGE value="Added pure and mixed strategies. Debugged kill_and_reproduce. Added js code to make the visualisation more interactive." />
     <MESSAGE value="No changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="No changes" />
+    <MESSAGE value="Test commit branch mark" />
+    <MESSAGE value="General clean-up of classes and functions. Addition of Prisoner's Dilemma." />
+    <MESSAGE value="Moved sim files and updated README.md" />
+    <MESSAGE value="Moved files and updated README.md" />
+    <MESSAGE value="Overhaul in file structure&#10;Organised class structure much better between model.py and agent.py with a superclass containing many of the generic game-play&#10;Introduced config files to allow for server-side manipulation and input of game" />
+    <MESSAGE value="Updated .gitignore to include workspace.xml" />
+    <MESSAGE value="Mutations are more random and evolution is less sudden. Agents play more intelligently" />
+    <MESSAGE value="Added plotting capabilities and batch-running in run.py" />
+    <MESSAGE value="Debugged to visualise imperfect strategies" />
+    <option name="LAST_COMMIT_MESSAGE" value="Debugged to visualise imperfect strategies" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/tornado/netutil.py">
@@ -379,87 +511,134 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/utils/logger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/sim/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1">
-          <caret line="62" selection-start-line="62" selection-end-line="78" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-            <marker date="1540546626371" expanded="true" signature="848:978" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1530">
-          <caret line="90" column="22" selection-start-line="90" selection-start-column="22" selection-end-line="90" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-            <marker date="1540546724839" expanded="true" signature="405:407" ph="..." />
-            <marker date="1540546724839" expanded="true" signature="1168:1287" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="18" selection-start-column="18" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/simple_continuous_canvas.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1717">
-          <caret line="113" column="36" selection-start-line="113" selection-start-column="36" selection-end-line="113" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/SimpleContinuousModule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="146">
-          <caret line="67" column="19" selection-start-line="67" selection-start-column="19" selection-end-line="67" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda/Lib/types.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4417" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/visualisation/server.py">
+    <entry file="file://$USER_HOME$/OneDrive/Documents/Academic/University/Physics/3rd_Year/Project/Examples/mesa/examples/hex_snowflake/Readme.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py" />
+    <entry file="file://$PROJECT_DIR$/game_theory/rps.ini" />
+    <entry file="file://$PROJECT_DIR$/game_theory/SimpleContinuousModule.py" />
+    <entry file="file://$PROJECT_DIR$/../Triton-Tinder-Bot/tinder_bot.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="571">
-          <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+        <state relative-caret-position="17">
+          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/logger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="187">
+            <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/ModularVisualization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4964">
+          <caret line="301" column="8" selection-start-line="301" selection-start-column="8" selection-end-line="301" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/UserParam.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1462">
+          <caret line="86" column="8" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/simple_continuous_canvas.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
           <folding>
-            <element signature="e#0#49#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1496">
+          <caret line="87" column="50" lean-forward="true" selection-start-line="87" selection-start-column="50" selection-end-line="87" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="107" column="59" selection-start-line="107" selection-start-column="59" selection-end-line="107" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/agent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="98" column="56" selection-start-line="98" selection-start-column="56" selection-end-line="98" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+            <marker date="1542290258345" expanded="true" signature="3054:4653" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="66" column="33" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#82#0" expanded="true" />
           </folding>
         </state>
       </provider>
