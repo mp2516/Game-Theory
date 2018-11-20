@@ -55,3 +55,6 @@ def ternary_plot(model, labels):
     tax.ticks(axis='lbr', multiple=0.2, linewidth=1)
     tax.legend()
     tax.show()
+
+def pie_chart():
+    pass
