@@ -55,6 +55,10 @@ def agent_portrayal(agent):
 
     portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
 
+    if agent.strategy == "Perfect Mixed":
+        portrayal["Color"] = "black"
+
+
     return portrayal
 
 
@@ -62,7 +66,11 @@ grid = CanvasGrid(agent_portrayal, model_config.width, model_config.height, 500,
 
 # it is essential the label matches that collected by the datacollector
 if model_config.game_type == "RPS":
-    if model_config.game_mode == "Pure Only" or model_config.game_mode == "Pure and Perfect":
+    if model_config.game_mode == "Pure Only":
+        chart = ChartModule([{"Label": "Pure Rock", "Color": "red"}, {"Label": "Pure Paper", "Color": "green"},
+                             {"Label": "Pure Scissors", "Color": "blue"}, {"Label": "Perfect Mixed", "Color": "black"}],
+                            data_collector_name='datacollector_populations')
+    elif model_config.game_mode == "Pure and Perfect":
         chart = ChartModule([{"Label": "Pure Rock",
                               "Color": "red"},
                              {"Label": "Pure Paper",
