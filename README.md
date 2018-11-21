@@ -5,7 +5,7 @@
 This game-theory simulator can play a number of different games:
 
 ##### Rock-Paper-Scissors
-
+Rock paper scissors is a great game!
 
 
 ##### Prisoner's Dilemma
