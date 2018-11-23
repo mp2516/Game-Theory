@@ -1,41 +1,35 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule, ChartVisualization
+from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
-from mesa.visualization.UserParam import UserSettableParameter
 from .config import Config
-from .model import GameGrid
+from .model import PDModel, RPSModel
 from colour import Color
 from .logger import logger
+import numpy as np
 
 file_name = "game_theory/game_configs/rock_paper_scissors.json"
 with open(file_name) as d:
     model_config = Config(d.read())
 
 
-class SimpleCanvas(VisualizationElement):
-    local_includes = ['simple_continuous_canvas.js']
-    portrayal_method = None
+class HistogramModule(VisualizationElement):
+    package_includes = ["Chart.min.js"]
+    local_includes = ["histogram_module.js"]
 
-    def __init__(self, portrayal_method):
+    def __init__(self, bins, canvas_height, canvas_width):
         super().__init__()
-        self.portrayal_method = portrayal_method
-
-        new_element = ("new Simple_Continuous_Module({})".format(canvas_config))
+        self.canvas_height = canvas_height
+        self.canvas_width = canvas_width
+        self.bins = bins
+        new_element = "new HistogramModule({}, {}, {})"
+        new_element = new_element.format(bins,
+                                         canvas_width,
+                                         canvas_height)
         self.js_code = "elements.push(" + new_element + ");"
 
     def render(self, model):
-        space_state = []
-        self.render_agents(model, space_state)
-
-        return space_state
-
-    def render_agents(self, model, space_state):
-        for agent in model.agent_schedule.agents:
-            self.render_agent(agent, space_state)
-
-    def render_agent(self, agent, space_state):
-        portrayal = self.portrayal_method(agent)
-        space_state.append(portrayal)
-
+        score_vals = [agent.total_score for agent in model.schedule.agents]
+        hist = np.histogram(score_vals, bins=self.bins)[0]
+        return [int(x) for x in hist]
 
 def agent_portrayal(agent):
     # opacity should be a number between 0-1
@@ -48,46 +42,31 @@ def agent_portrayal(agent):
 
     if model_config.game_type == "RPS":
         agent_prob = agent.probabilities
+        portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
 
     elif model_config.game_type == "PD":
-        # in order to make the list 3 x 1 which ensures it fits into the RBG format
-        agent_prob = agent.probabilities.append(0)
-
-    portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
-
-    if agent.strategy == "Perfect Mixed":
-        portrayal["Color"] = "black"
-
-
+        strategy_to_color = {"all_c": "Red", "all_d": "Blue", "tit_for_tat": "Green", "spiteful": "Yellow", "random": "Pink"}
+        portrayal["Color"] = strategy_to_color[agent.strategy]
     return portrayal
 
 
-grid = CanvasGrid(agent_portrayal, model_config.width, model_config.height, 500, 500)
+grid = CanvasGrid(agent_portrayal, model_config.dimension, model_config.dimension, 500, 500)
 
 # it is essential the label matches that collected by the datacollector
 if model_config.game_type == "RPS":
-    if model_config.game_mode == "Pure Only":
+    if model_config.game_mode == "Pure":
         chart = ChartModule([{"Label": "Pure Rock", "Color": "red"}, {"Label": "Pure Paper", "Color": "green"},
-                             {"Label": "Pure Scissors", "Color": "blue"}, {"Label": "Perfect Mixed", "Color": "black"}],
+                             {"Label": "Pure Scissors", "Color": "blue"}],
                             data_collector_name='datacollector_populations')
-    elif model_config.game_mode == "Pure and Perfect":
-        chart = ChartModule([{"Label": "Pure Rock",
-                              "Color": "red"},
-                             {"Label": "Pure Paper",
-                              "Color": "green"},
-                             {"Label": "Pure Scissors",
-                              "Color": "blue"},
-                             {"Label": "Perfect Mixed",
-                              "Color": "black"}],
-                            data_collector_name='datacollector_populations')
-        server = ModularServer(GameGrid, [grid, chart], "Rock Paper Scissors Simulator", {"config": model_config})
+        histogram = HistogramModule(list(range(10)), 200, 200)
+        server = ModularServer(RPSModel, [grid, chart, histogram], "Rock Paper Scissors Simulator", {"config": model_config})
     else:
-        server = ModularServer(GameGrid, [grid], "Rock Paper Scissors Simulator", {"config": model_config})
+        server = ModularServer(RPSModel, [grid], "Rock Paper Scissors Simulator", {"config": model_config})
 
 elif model_config.game_type == "PD":
-    chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}],
-                        data_collector_name='datacollector')
-    server = ModularServer(GameGrid, [grid, chart], "Prisoners Dilemma Simulator", {"config": model_config})
+    chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}, {"Label": "tit_for_tat", "Color": "Green"}, {"Label": "spiteful", "Color": "Yellow"}, {"Label": "Random", "Color": "Pink"}],
+                        data_collector_name='datacollector_populations')
+    server = ModularServer(PDModel, [grid, chart], "Prisoners Dilemma Simulator", {"config": model_config})
 
 server.verbose = False
 

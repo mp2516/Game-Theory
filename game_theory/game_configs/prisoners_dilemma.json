@@ -10,6 +10,5 @@
   "probability_adoption": 0.5,
   "strength_of_adoption": 0.5,
   "probability_mutation": 0.01,
-  "strength_of_mutation": 0.01,
-  ""
+  "strength_of_mutation": 0.01
 }
