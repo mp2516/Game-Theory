@@ -58,3 +58,9 @@ def ternary_plot(model, labels):
 
 def pie_chart():
     pass
+
+def histogram():
+    pass
+
+def cross_sectional_graph():
+    pass
