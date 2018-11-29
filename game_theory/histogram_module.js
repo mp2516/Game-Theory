@@ -2,11 +2,15 @@ var HistogramModule = function(bins, canvas_width, canvas_height) {
 
     var canvas_tag = "<canvas width='" + canvas_width + "' height='" + canvas_height + "' ";
     canvas_tag += "style='border:1px dotted'></canvas>";
+
     // Append it to body:
     var canvas = $(canvas_tag)[0];
     $("body").append(canvas);
+
     // Create the context and the drawing controller:
     var context = canvas.getContext("2d");
+
+    console.log("This code is running")
 
     // Prep the chart properties and series:
     var datasets = [{
@@ -33,6 +37,8 @@ var HistogramModule = function(bins, canvas_width, canvas_height) {
 
     // Create the chart object
     var chart = new Chart(context).Bar(data, options);
+
+    render_count = 0;
 
     this.render = function(data) {
         for (var i in data)

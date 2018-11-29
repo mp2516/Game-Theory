@@ -4,15 +4,17 @@ from .config import Config
 from .model import PDModel, RPSModel
 from colour import Color
 from .logger import logger
+import json
 import numpy as np
 
+# file_name = "game_theory/game_configs/prisoners_dilemma.json"
 file_name = "game_theory/game_configs/rock_paper_scissors.json"
 with open(file_name) as d:
     model_config = Config(d.read())
 
 
 class HistogramModule(VisualizationElement):
-    package_includes = ["Chart.min.js"]
+    package_includes = ["jsChart.min.js"]
     local_includes = ["histogram_module.js"]
 
     def __init__(self, bins, canvas_height, canvas_width):
@@ -29,7 +31,10 @@ class HistogramModule(VisualizationElement):
     def render(self, model):
         score_vals = [agent.total_score for agent in model.schedule.agents]
         hist = np.histogram(score_vals, bins=self.bins)[0]
+        print(hist)
+        print([int(x) for x in hist])
         return [int(x) for x in hist]
+
 
 def agent_portrayal(agent):
     # opacity should be a number between 0-1
@@ -55,16 +60,18 @@ grid = CanvasGrid(agent_portrayal, model_config.dimension, model_config.dimensio
 # it is essential the label matches that collected by the datacollector
 if model_config.game_type == "RPS":
     if model_config.game_mode == "Pure":
-        chart = ChartModule([{"Label": "Pure Rock", "Color": "red"}, {"Label": "Pure Paper", "Color": "green"},
+        chart_populations = ChartModule([{"Label": "Pure Rock", "Color": "red"}, {"Label": "Pure Paper", "Color": "green"},
                              {"Label": "Pure Scissors", "Color": "blue"}],
                             data_collector_name='datacollector_populations')
-        histogram = HistogramModule(list(range(10)), 200, 200)
-        server = ModularServer(RPSModel, [grid, chart, histogram], "Rock Paper Scissors Simulator", {"config": model_config})
+        chart_scores = ChartModule([{"Label": "Pure Rock Scores", "Color": "red"}, {"Label": "Pure Paper Scores", "Color": "green"}, {"Label": "Pure Scissors Scores", "Color": "blue"}],
+                            data_collector_name='datacollector_scores')
+        histogram = HistogramModule(list(range(-30, 30)), 500, 500)
+        server = ModularServer(RPSModel, [grid, chart_populations, chart_scores], "Rock Paper Scissors Simulator", {"config": model_config})
     else:
         server = ModularServer(RPSModel, [grid], "Rock Paper Scissors Simulator", {"config": model_config})
 
 elif model_config.game_type == "PD":
-    chart = ChartModule([{"Label": "Cooperating", "Color": "Red"}, {"Label": "Defecting", "Color": "Blue"}, {"Label": "tit_for_tat", "Color": "Green"}, {"Label": "spiteful", "Color": "Yellow"}, {"Label": "Random", "Color": "Pink"}],
+    chart = ChartModule([{"Label": "cooperating", "Color": "Red"}, {"Label": "defecting", "Color": "Blue"}, {"Label": "tit_for_tat", "Color": "Green"}, {"Label": "spiteful", "Color": "Yellow"}, {"Label": "random", "Color": "Pink"}],
                         data_collector_name='datacollector_populations')
     server = ModularServer(PDModel, [grid, chart], "Prisoners Dilemma Simulator", {"config": model_config})
 

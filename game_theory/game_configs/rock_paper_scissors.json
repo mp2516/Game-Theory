@@ -5,13 +5,17 @@
   "number_of_sims": 100,
   "game_type": "RPS",
   "num_moves_per_set": 1,
-  "initial_population_sizes": [0.34, 0.33, 0.33],
-  "biomes": false,
-  "biome_percentage_size": 0.2,
+
+  "initial_population_sizes": [0.1, 0.3, 0.2],
+  "biomes": true,
+
+  "agent_strategies": ["all_r", "all_s", "all_p"],
+  "agent_moves": ["R", "P", "S"],
   "game_mode": "Pure",
-  "cull_score": -10,
-  "probability_adoption": 0.2,
+
+  "cull_score": 0,
+  "probability_adoption": 1,
   "strength_of_adoption": 1,
-  "probability_mutation": 0.01,
-  "strength_of_mutation": 0.01
+  "probability_mutation": 0.00001,
+  "strength_of_mutation": 0.001
 }

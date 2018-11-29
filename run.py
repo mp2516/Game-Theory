@@ -16,10 +16,10 @@ def run_model(config, n):
     print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
 
     fft_analysis(model)
-    if config.game_mode == "Pure Only":
+    if config.game_mode == "Pure":
         labels = ["Pure Rock", "Pure Paper", "Pure Scissors"]
         ternary_plot(model, labels)
-    elif config.game_type == "Imperfect":
+    elif config.game_type == "Impure":
         labels = ["P(Rock)", "P(Paper)", "P(Scissors)"]
         ternary_plot(model, labels)
 
