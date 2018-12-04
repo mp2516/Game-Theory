@@ -1,4 +1,4 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
 from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
 from .config import Config
 from .model import PDModel, RPSModel
@@ -36,6 +36,16 @@ class HistogramModule(VisualizationElement):
         return [int(x) for x in hist]
 
 
+class MutatingAgents(TextElement):
+
+    def __init__(self):
+        pass
+
+    def render(self, model):
+        return "Mutating Agents: " + str(model.num_mutating_agents)
+
+
+
 def agent_portrayal(agent):
     # opacity should be a number between 0-1
 
@@ -48,6 +58,8 @@ def agent_portrayal(agent):
     if model_config.game_type == "RPS":
         agent_prob = agent.probabilities
         portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
+        if agent.strategy == "empty":
+            portrayal["Color"] = "black"
 
     elif model_config.game_type == "PD":
         strategy_to_color = {"all_c": "Red", "all_d": "Blue", "tit_for_tat": "Green", "spiteful": "Yellow", "random": "Pink"}
@@ -65,15 +77,18 @@ if model_config.game_type == "RPS":
                             data_collector_name='datacollector_populations')
         chart_scores = ChartModule([{"Label": "Pure Rock Scores", "Color": "red"}, {"Label": "Pure Paper Scores", "Color": "green"}, {"Label": "Pure Scissors Scores", "Color": "blue"}],
                             data_collector_name='datacollector_scores')
+        mutating_agents = ChartModule([{"Label": "Num Mutating Agents", "Color": "red"}], data_collector_name='datacollector_mutating_agents')
         histogram = HistogramModule(list(range(-30, 30)), 500, 500)
-        server = ModularServer(RPSModel, [grid, chart_populations, chart_scores], "Rock Paper Scissors Simulator", {"config": model_config})
+        server = ModularServer(RPSModel, [grid, chart_populations, chart_scores, mutating_agents], "Rock Paper Scissors Simulator", {"config": model_config})
     else:
         server = ModularServer(RPSModel, [grid], "Rock Paper Scissors Simulator", {"config": model_config})
 
 elif model_config.game_type == "PD":
-    chart = ChartModule([{"Label": "cooperating", "Color": "Red"}, {"Label": "defecting", "Color": "Blue"}, {"Label": "tit_for_tat", "Color": "Green"}, {"Label": "spiteful", "Color": "Yellow"}, {"Label": "random", "Color": "Pink"}],
+    chart_populations = ChartModule([{"Label": "cooperating", "Color": "Red"}, {"Label": "defecting", "Color": "Blue"}, {"Label": "tit_for_tat", "Color": "Green"}, {"Label": "spiteful", "Color": "Yellow"}, {"Label": "random", "Color": "Pink"}],
                         data_collector_name='datacollector_populations')
-    server = ModularServer(PDModel, [grid, chart], "Prisoners Dilemma Simulator", {"config": model_config})
+    chart_scores = ChartModule([{"Label": "cooperating Scores", "Color": "Red"}, {"Label": "defecting Scores", "Color": "Blue"}, {"Label": "tit_for_tat Scores", "Color": "Green"}, {"Label": "spiteful Scores", "Color": "Yellow"}, {"Label": "random Scores", "Color": "Pink"}],
+                        data_collector_name='datacollector_scores')
+    server = ModularServer(PDModel, [grid, chart_populations, chart_scores], "Prisoners Dilemma Simulator", {"config": model_config})
 
 server.verbose = False
 

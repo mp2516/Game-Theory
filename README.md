@@ -69,3 +69,11 @@ The Prisoner's Dilemma demonstrates how simple rules can lead to the emergence o
 [Non-linear dynamics of rock-paper-scissors with Mutations](https://arxiv.org/pdf/1502.03370.pdf)
 
 [Cyclic dominance in evolutionary games: a review](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4191105/)
+
+[Oscillitory dynamics of Rock-Paper-Scissors](https://ac.els-cdn.com/S0022519310000123/1-s2.0-S0022519310000123-main.pdf?_tid=8a0c7e4f-10b1-40b8-96df-ee9aa9ab4a05&acdnat=1543783308_9aa411b2def1624726fc1b60352bcb9e)
+
+A textbook like paper describing the fundementals of evolutionary games, cited as the founding paper of the field.
+[Evolutionary games and population Dynamics](http://baloun.entu.cas.cz/krivan/papers/kamenice13.pdf)
+
+1994, a fundemental paper that started the field off
+[Vortices and Strings in Model ecosystems](https://journals.aps.org/pre/pdf/10.1103/PhysRevE.50.3401)

@@ -1,5 +1,5 @@
 {
-  "dimension": 50,
+  "dimension": 4,
   "simulation": true,
   "number_of_steps": 100,
   "number_of_sims": 100,
@@ -10,11 +10,12 @@
   "biomes": false,
 
   "agent_strategies": ["all_c", "all_d", "tit_for_tat", "spiteful", "random"],
+  "agent_moves": ["C", "D"],
   "game_mode": "Pure",
 
   "cull_score": 0,
-  "probability_adoption": 0.2,
+  "probability_adoption": 1,
   "strength_of_adoption": 1,
-  "probability_mutation": 0.01,
+  "probability_mutation": 1,
   "strength_of_mutation": 0.01
 }

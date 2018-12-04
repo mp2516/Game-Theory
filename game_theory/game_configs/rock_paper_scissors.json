@@ -1,13 +1,13 @@
 {
-  "dimension": 50,
+  "dimension": 25,
   "simulation": true,
   "number_of_steps": 100,
   "number_of_sims": 100,
   "game_type": "RPS",
   "num_moves_per_set": 1,
 
-  "initial_population_sizes": [0.1, 0.3, 0.2],
-  "biomes": true,
+  "initial_population_sizes": [0.5, 0.3, 0.2],
+  "biomes": false,
 
   "agent_strategies": ["all_r", "all_s", "all_p"],
   "agent_moves": ["R", "P", "S"],
@@ -16,6 +16,7 @@
   "cull_score": 0,
   "probability_adoption": 1,
   "strength_of_adoption": 1,
-  "probability_mutation": 0.00001,
-  "strength_of_mutation": 0.001
+  "probability_mutation": 0,
+  "strength_of_mutation": 0.001,
+  "epsilon": 1
 }

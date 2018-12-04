@@ -74,6 +74,7 @@ class GameGrid(Model):
         self.dimension = config.dimension
         self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
         self.step_num = 0
+        self.num_mutating_agents = 0
 
         self.num_moves_per_set = config.num_moves_per_set
         self.game_type = config.game_type
@@ -142,7 +143,11 @@ class GameGrid(Model):
 class RPSModel(GameGrid):
     def __init__(self, config):
         super().__init__(config)
-        self.payoff = self.payoff_RPS
+        self.epsilon = config.epsilon
+        self.payoff = {("R", "R"): 0, ("R", "P"): -self.epsilon, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0, ("P", "S"): -self.epsilon,
+                      ("S", "R"): -self.epsilon, ("S", "P"): 1, ("S", "S"): 0}
+
+
 
         # Create agents
         for x in range(self.dimension):
@@ -176,11 +181,16 @@ class RPSModel(GameGrid):
              "Pure Scissors Scores": lambda m: self.count_scores(m, "all_s")}
         )
 
+        self.datacollector_mutating_agents = DataCollector(
+            {"Num Mutating Agents": self.num_mutating_agents}
+        )
+
     def step(self):
-        self.schedule.step()
         self.step_num += 1
+        self.num_mutating_agents = 0
         for agent in self.schedule.agents:
             agent.increment_score()
+        for agent in self.schedule.agents:
             agent.evolve_strategy()
         for agent in self.schedule.agents:
             agent.implement_strategy()
@@ -189,6 +199,7 @@ class RPSModel(GameGrid):
         elif self.game_mode == "Impure":
             self.datacollector_probabilities.collect(self)
         self.datacollector_scores.collect(self)
+        self.datacollector_mutating_agents.collect(self)
 
 
 class PDModel(GameGrid):
@@ -211,9 +222,21 @@ class PDModel(GameGrid):
              "random": lambda m: self.count_populations(m, "random")})
         self.datacollector_populations.collect(self)
 
+        self.datacollector_scores = DataCollector({"cooperating Scores": lambda m: self.count_scores(m, "all_c"),
+                                                   "defecting Scores": lambda m: self.count_scores(m, "all_d"),
+                                                   "tit_for_tat Scores": lambda m: self.count_scores(m, "tit_for_tat"),
+                                                   "spiteful Scores": lambda m: self.count_scores(m, "spiteful"),
+                                                   "random Scores": lambda  m: self.count_scores(m, "random")})
+
     def step(self):
+        self.schedule.step()
+        self.step_num += 1
         move_count = 0
-        while move_count < (self.num_moves_per_set * (self.dimension ** 2)):
+        for i in range(self.num_moves_per_set):
             for agent in self.schedule.agents:
                 agent.increment_score(move_count)
-                agent.play_reactive_strategy()
+        for agent in self.schedule.agents:
+            agent.evolve_strategy()
+        for agent in self.schedule.agents:
+            agent.implement_strategy()
+        self.datacollector_populations.collect(self)

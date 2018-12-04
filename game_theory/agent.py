@@ -40,10 +40,6 @@ class GameAgent(Agent):
             else:
                 self.strategy = np.random.choice(a=self.model.agent_strategies, p=self.model.initial_population_sizes)
 
-
-    def step(self):
-        pass
-
     def evolve_strategy(self):
         if random.random() <= self.model.probability_mutation:
             if self.model.game_mode == "Pure":
@@ -65,6 +61,7 @@ class GameAgent(Agent):
                             self.new_probabilities[num] = i + ((j - i) * self.model.strength_of_adoption)
                 elif self.model.game_mode == "Pure":
                     self.new_strategy = strongest_neighbour.strategy
+                    self.model.num_mutating_agents += 1
             else:
                 self.new_strategy = self.strategy
                 self.new_probabilities = self.probabilities
@@ -106,6 +103,8 @@ class RPSAgent(GameAgent):
         elif self.strategy == "all_s":
             self.probabilities = [0, 0, 1]
             self.move = "S"
+        elif self.strategy == "empty":
+            self.move = None
 
     def implement_strategy(self):
         self.strategy = self.new_strategy
@@ -122,44 +121,40 @@ class RPSAgent(GameAgent):
 class PDAgent(GameAgent):
     def __init__(self, pos, model):
         super().__init__(pos, model)
-        self.previous_moves = None
-        self.strategy = np.random.choice(self.model.agent_strategies, p=self.model.initial_population_sizes)
-        if self.strategy == "all_c":
-            self.move = ["C"]
-        elif self.strategy == "all_d":
-            self.move = ["D"]
-        elif self.strategy == "random":
-            self.move = np.random.choice(a=self.model.agent_moves)
+        self.previous_moves = []
+        self.implement_strategy()
 
-    def play_reactive_strategy(self, move_count, neighbour):
+    def play_reactive_strategy(self, move_count, neighbor):
         if self.strategy == "tit_for_tat":
             if move_count == 0:
-                self.move = ["C"]
+                self.move = "C"
             else:
-                self.move = neighbour.previous_moves[-1]
+                self.move = neighbor.previous_moves[-1]
         elif self.strategy == "spiteful":
-            if "D" in neighbour.previous_moves:
-                self.move = ["D"]
+            if "D" in neighbor.previous_moves:
+                self.move = "D"
             else:
-                self.move = ["C"]
+                self.move = "C"
 
     def implement_strategy(self):
         if self.strategy == "all_c":
-            self.move = ["C"]
+            self.move = "C"
         elif self.strategy == "all_d":
-            self.move = ["D"]
+            self.move = "D"
         elif self.strategy == "random":
-            self.move = np.random.choice(a=["C", "D"], size=self.model.num_moves_per_set)
+            self.move = np.random.choice(a=self.model.agent_moves)
+        elif self.strategy == "tit_for_tat":
+            self.move = "C"
+        elif self.strategy == "spiteful":
+            self.move = "D"
 
     def increment_score(self, move_count):
-        # neighbours_moves = [neighbour.moves for neighbour in self.neighbours]
-        for num, neighbour in self.model.grid.neighbor_iter(self.pos):
-            self.scores[num] += sum(self.model.payoff(self.move, neighbour.move))
+        for num, neighbor in enumerate(self.model.grid.neighbor_iter(self.pos)):
+            self.play_reactive_strategy(move_count, neighbor)
+            self.scores[num] += self.model.payoff[self.move, neighbor.move]
+        self.total_score = sum(self.scores)
         move_count += 1
         return move_count
-
-    def step(self):
-        pass
 
 
 
