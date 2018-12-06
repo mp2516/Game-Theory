@@ -71,29 +71,30 @@ class GameGrid(Model):
         '''
         super().__init__()
 
-        self.dimension = config.dimension
+        self.dimension = config['dimension']
         self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
         self.step_num = 0
-        self.num_mutating_agents = 0
+        self.num_mutating = 0
+        self.fraction_mutating = 0
 
-        self.num_moves_per_set = config.num_moves_per_set
-        self.game_type = config.game_type
-        self.game_mode = config.game_mode
+        self.num_moves_per_set = config['num_moves_per_set']
+        self.game_type = config['game_type']
+        self.game_mode = config['game_mode']
 
-        self.initial_population_sizes = config.initial_population_sizes
-        self.biomes = config.biomes
+        self.initial_population_sizes = config['initial_population_sizes']
+        self.biomes = config['biomes']
         if self.biomes:
             self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.dimension)
 
-        self.cull_score = config.cull_score
-        self.probability_adoption = config.probability_adoption
-        self.strength_of_adoption = config.strength_of_adoption
+        self.cull_score = config['cull_score']
+        self.probability_adoption = config['probability_adoption']
+        self.strength_of_adoption = config['strength_of_adoption']
 
-        self.probability_mutation = config.probability_mutation
-        self.strength_of_mutation = config.strength_of_mutation
+        self.probability_mutation = config['probability_mutation']
+        self.strength_of_mutation = config['strength_of_mutation']
 
-        self.agent_strategies = config.agent_strategies
-        self.agent_moves = config.agent_moves
+        self.agent_strategies = config['agent_strategies']
+        self.agent_moves = config['agent_moves']
 
         self.schedule = RandomActivation(self)
         self.running = True
@@ -143,7 +144,7 @@ class GameGrid(Model):
 class RPSModel(GameGrid):
     def __init__(self, config):
         super().__init__(config)
-        self.epsilon = config.epsilon
+        self.epsilon = config['epsilon']
         self.payoff = {("R", "R"): 0, ("R", "P"): -self.epsilon, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0, ("P", "S"): -self.epsilon,
                       ("S", "R"): -self.epsilon, ("S", "P"): 1, ("S", "S"): 0}
 
@@ -182,12 +183,12 @@ class RPSModel(GameGrid):
         )
 
         self.datacollector_mutating_agents = DataCollector(
-            {"Num Mutating Agents": self.num_mutating_agents}
+            {"Num Mutating Agents": "fraction_mutating"}
         )
 
     def step(self):
         self.step_num += 1
-        self.num_mutating_agents = 0
+        self.num_mutating = 0
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
@@ -198,6 +199,7 @@ class RPSModel(GameGrid):
             self.datacollector_populations.collect(self)
         elif self.game_mode == "Impure":
             self.datacollector_probabilities.collect(self)
+        self.fraction_mutating = self.num_mutating / (self.dimension**2)
         self.datacollector_scores.collect(self)
         self.datacollector_mutating_agents.collect(self)
 

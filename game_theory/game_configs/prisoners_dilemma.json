@@ -1,5 +1,6 @@
 {
   "dimension": 4,
+  "pixel_dimension": 500,
   "simulation": true,
   "number_of_steps": 100,
   "number_of_sims": 100,

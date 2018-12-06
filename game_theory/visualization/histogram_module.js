@@ -10,8 +10,6 @@ var HistogramModule = function(bins, canvas_width, canvas_height) {
     // Create the context and the drawing controller:
     var context = canvas.getContext("2d");
 
-    console.log("This code is running")
-
     // Prep the chart properties and series:
     var datasets = [{
         label: "Data",
