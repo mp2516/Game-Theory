@@ -53,11 +53,6 @@ class GameGrid(Model):
     # This dictionary holds the payoff for the agent that makes the first move in the key
     # keyed on: (my_move, other_move)
 
-    payoff_PD = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 2, ("D", "D"): 0}
-
-    payoff_RPS = {("R", "R"): 0, ("R", "P"): -1, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0,
-                  ("P", "S"): -1, ("S", "R"): -1, ("S", "P"): 1, ("S", "S"): 0}
-
     def __init__(self, config):
         '''
         Create a new Spatial Game Model
@@ -95,6 +90,8 @@ class GameGrid(Model):
 
         self.agent_strategies = config['agent_strategies']
         self.agent_moves = config['agent_moves']
+
+        self.probability_cull_score_decrease = config['probability_cull_score_decrease']
 
         self.schedule = RandomActivation(self)
         self.running = True
@@ -145,22 +142,21 @@ class RPSModel(GameGrid):
     def __init__(self, config):
         super().__init__(config)
         self.epsilon = config['epsilon']
-        self.payoff = {("R", "R"): 0, ("R", "P"): -self.epsilon, ("R", "S"): 1, ("P", "R"): 1, ("P", "P"): 0, ("P", "S"): -self.epsilon,
-                      ("S", "R"): -self.epsilon, ("S", "P"): 1, ("S", "S"): 0}
+        self.payoff = {("R", "R"): 0,
+                       ("R", "P"): -self.epsilon,
+                       ("R", "S"): 1,
+                       ("P", "R"): 1,
+                       ("P", "P"): 0,
+                       ("P", "S"): -self.epsilon,
+                       ("S", "R"): -self.epsilon,
+                       ("S", "P"): 1,
+                       ("S", "S"): 0}
 
-
-
-        # Create agents
         for x in range(self.dimension):
             for y in range(self.dimension):
                 agent = RPSAgent([x, y], self)
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
-
-
-
-            # for x in range(x_rand - self.biome_size, x_rand + self.biome_size):
-            #     for y in range(y_rand - self.biome_size, y_rand + self.biome_size):
 
         if self.game_mode == "Pure":
             self.datacollector_populations = DataCollector(
@@ -207,7 +203,10 @@ class RPSModel(GameGrid):
 class PDModel(GameGrid):
     def __init__(self, config):
         super().__init__(config)
-        self.payoff = self.payoff_PD
+        self.payoff = {("C", "C"): 1,
+                       ("C", "D"): 0,
+                       ("D", "C"): 2,
+                       ("D", "D"): 0}
 
         # Create agents
         for x in range(self.dimension):

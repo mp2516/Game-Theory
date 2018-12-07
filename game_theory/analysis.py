@@ -76,8 +76,6 @@ def histogram(model):
         print("population scores>>")
         print(all_population_scores[population_scores])
 
-    # =============================================================================  #     for population_scores in all_population_scores:  #         print("population scores>>", all_population_scores[population_scores])          #         plt.hist(all_population_scores[population_scores], bins=4)  # =============================================================================  # bins=model.num_moves_per_set*16+1  #    plt.show()
-
 
 def pie_chart(model):
     all_population_data = model.datacollector_populations.get_model_vars_dataframe()
@@ -85,9 +83,30 @@ def pie_chart(model):
     for population_data in all_population_data:
         populations = all_population_data[population_data]
         current_populations.append(populations[model.number_of_steps])
-    #     current_populations = [a[model.number_of_steps - 1] for a in [population_data for population_data in all_population_data]]
+    #   current_populations = [a[model.number_of_steps - 1] for a in [population_data for population_data in all_population_data]]
     plt.figure(4, )
     plt.pie(current_populations, labels=[a for a in all_population_data.columns])
+
+
+def calculate_extinction_time(model):
+    """
+
+    :param model:
+    :return: np.inf if the population remains stable for the whole simulation, step_num if the population reaches
+        extinction after a certain period of time.
+    """
+    all_population_data = model.datacollector_populations.get_model_vars_dataframe()
+    # we only need to loop through one population data set
+    for population_data in all_population_data:
+        populations = all_population_data[population_data]
+        break
+    for step_num, i in enumerate(populations):
+        if i == (model.dimension ** 2) or i == 0:
+            # there is one homogenous population
+            # if it is homogenous we can break out of the loop
+            return step_num
+    return len(populations) + 1
+
 
 def cross_sectional_graph():
     pass

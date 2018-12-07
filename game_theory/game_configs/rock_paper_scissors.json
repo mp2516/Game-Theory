@@ -1,16 +1,16 @@
 {
   "batchrunning": {
     "variable_output": true,
-    "variable": "cull_score",
-    "dependent": "frequency",
-    "start": -5,
-    "stop": 5,
+    "variable": "dimension",
+    "dependent": "extinction_time",
+    "start": 3,
+    "stop": 12,
     "step": 1,
-    "num_sims_per_interval": 100,
+    "num_sims_per_interval": 5,
     "num_steps": 100
   },
   "parameters": {
-    "dimension": 25,
+    "dimension": 3,
     "pixel_dimension": 500,
     "simulation": false,
     "game_type": "RPS",
@@ -32,7 +32,8 @@
       "S"
     ],
     "game_mode": "Pure",
-    "cull_score": -2,
+    "cull_score": 0,
+    "probability_cull_score_decrease": 0,
     "probability_adoption": 1,
     "strength_of_adoption": 1,
     "probability_mutation": 0,
