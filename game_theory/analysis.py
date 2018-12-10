@@ -29,7 +29,7 @@ def fft_analysis(model):
         plt.ylabel('Population')
 
     plt.show()
-#    print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
+    print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
 
 def histogram(model):
     all_population_scores = model.datacollector_scores.get_model_vars_dataframe()

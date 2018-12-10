@@ -75,9 +75,11 @@ class GameGrid(Model):
         super().__init__()
 
         self.dimension = config.dimension
-        self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
+        self.grid = SingleGrid(self.dimension, self.dimension, torus=False)
         self.step_num = 0
+        self.number_of_steps = config.number_of_steps
         self.num_mutating_agents = 0
+        self.crowded_players = []
 
         self.num_moves_per_set = config.num_moves_per_set
         self.game_type = config.game_type
@@ -89,6 +91,9 @@ class GameGrid(Model):
             self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.dimension)
 
         self.cull_score = config.cull_score
+        self.probability_cull_score_decrease = config.probability_cull_score_decrease
+        self.probability_of_exchange = config.probability_of_exchange
+        self.probability_of_playing = config.probability_of_playing
         self.probability_adoption = config.probability_adoption
         self.strength_of_adoption = config.strength_of_adoption
 
@@ -156,18 +161,21 @@ class RPSModel(GameGrid):
         self.step_num += 1
         self.num_mutating_agents = 0
 
-#        if self.step_num % 2 == 0:
+#        if self.step_num % 2 == 1:
 #            for agent in self.schedule.agents:
 #                agent.increment_score()
 #            for agent in self.schedule.agents:
 #                agent.kill_weak()
-##        for agent in self.schedule.agents:
+#            for agent in self.schedule.agents:
+#                agent.identify_crowded()
+#            for agent in self.schedule.agents:
+#                agent.kill_crowded()
 #
-#        elif self.step_num % 2 == 1:
+#        elif self.step_num % 2 == 0:
 #            for agent in self.schedule.agents:
 #                agent.reproduce()
 #        for agent in self.schedule.agents:
-#            agent.implement_strategies()
+#            agent.implement_strategy()
         
 #        for agent in self.schedule.agents:
 #            agent.evolve_strategies()
@@ -176,11 +184,21 @@ class RPSModel(GameGrid):
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
+            agent.identify_crowded()
+        for agent in self.schedule.agents:
             agent.kill_weak()
         for agent in self.schedule.agents:
             agent.implement_strategy()
+#        for agent in self.schedule.agents:
+#            agent.kill_crowded()
+#        for agent in self.schedule.agents:
+#            agent.implement_strategy()
         for agent in self.schedule.agents:
             agent.reproduce()
+        for agent in self.schedule.agents:
+            agent.implement_strategy()
+        for agent in self.schedule.agents:
+            agent.exchange()
         for agent in self.schedule.agents:
             agent.implement_strategy()
             
@@ -190,6 +208,8 @@ class RPSModel(GameGrid):
             self.datacollector_probabilities.collect(self)
         self.datacollector_scores.collect(self)
 #        self.datacollector_mutating_agents.collect(self)
+#        print(len(self.crowded_players)/(self.dimension)**2)
+        self.crowded_players.clear()
 
     def run(self, n):
         ''' Run the model for n steps. '''

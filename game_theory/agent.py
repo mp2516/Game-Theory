@@ -28,6 +28,7 @@ class GameAgent(Agent):
         self.evolved = False
         self.strategy = ""
         self.new_strategy = ""
+        self.crowded = []
 
         if self.model.game_mode == "Pure":
             if self.model.biomes:
@@ -67,7 +68,7 @@ class GameAgent(Agent):
             self.new_probabilities = self.probabilities
             
     def kill_weak(self):
-        if random.random() < 0:
+        if random.random() < self.model.probability_cull_score_decrease:
             cull_threshold = self.model.cull_score - 1
         else:
             cull_threshold = self.model.cull_score
@@ -78,48 +79,28 @@ class GameAgent(Agent):
             self.new_probabilities = self.probabilities
         
 
-    def kill_crowded(self):       
-#        if int(len(game_no)/self.model.dimensions**2) % 2 == 0:        
-#            if all(self.strategy == neighbour.strategy for neighbour in self.neighbours):
-#                self.new_strategy = "empty"         
-#            else:
-#                self.new_strategy = self.strategy
-#                self.new_probabilities = self.probabilities
-        crowded_players = [player for player in self.model.schedule.agents if all(self.strategy == neighbour.strategy for neighbour in self.neighbours)]
-        if all(self.strategy == neighbour.strategy for neighbour in self.neighbours):
-            crowded_players.append(self)
-            if int(len(game_no)/self.model.dimensions**2) % 2 == 1:
-                if (len(game_no)/self.model.dimensions**2).is_integer():
-                    for player in crowded_players:
-                        player.strategy = "empty"
-                    crowded_players.clear()
-##        crowded_players = [player for player in self.model.schedule.agents if all(self.strategy == neighbour.strategy for neighbour in self.neighbours)]
+    def identify_crowded(self):       
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        if all(self.strategy == neighbour.strategy for neighbour in self.neighbors):
+            self.model.crowded_players.append(self)
+#        crowded_players = [player for player in self.model.schedule.agents if all(self.strategy == neighbour.strategy for neighbour in self.neighbors)]
 
-
-# =============================================================================
-#     def reproduce(self):
-# #        if not all(neighbour.strategy == "empty" for neighbour in self.neighbors):
-# #        neighbours_not_empty = [neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"]
-# #        random.shuffle(neighbours_not_empty)
-# #        strongest_neighbour = neighbours_not_empty[np.argmax([neighbour.total_score for neighbour in neighbours_not_empty])]
-#         
-#         random_neighbour = random.choice([neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"])
-#         if self.strategy == "empty" and strongest_neighbour.total_score >= 0 and random.random() <= self.model.probability_adoption and random.random() > self.model.probability_mutation:
-#             self.new_strategy =  random_neighbour.strategy
-#         elif self.strategy == "empty" and strongest_neighbour.total_score >= 0 and random.random() <= self.model.probability_adoption and random.random() <= self.model.probability_mutation:
-#             self.new_strategy = random.choice(random.choices(
-#                     population = ["all_r", "all_p", "all_s", "empty"],
-#                     weights = [100, 100, 100, 0],
-#                     k = 1
-#                     ))
-#         else:
-#             self.new_strategy = self.strategy
-#             self.new_probabilities = self.probabilities
-# #        else:
-# #            self.new_strategy = self.strategy
-# #            self.new_probabilities = self.probabilities
-# =============================================================================
+    def kill_crowded(self):
+        for player in self.model.crowded_players:
+            player.new_strategy = "empty"
+#        self.model.crowded_players.clear()
             
+    def exchange(self):
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        if random.random() < self.model.probability_of_exchange:            
+            random_neighbor = random.choice([neighbor for neighbor in self.neighbors])
+            a = self.strategy
+            self.new_strategy = random_neighbor.strategy
+            random_neighbor.new_strategy = a
+        else:
+            self.new_strategy = self.strategy
+            self.new_probabilities = self.probabilities
+        
 
     def reproduce(self):
         self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
@@ -127,7 +108,7 @@ class GameAgent(Agent):
             neighbours_not_empty = [neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"]
             random.shuffle(neighbours_not_empty)
             strongest_neighbour = neighbours_not_empty[np.argmax([neighbour.total_score for neighbour in neighbours_not_empty])]
-            random_neighbour = random.choice([neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"])
+            random_neighbour = random.choice(neighbours_not_empty)
             rand = random.random()
             if self.strategy == "empty" and strongest_neighbour.total_score >= 0 and rand <= self.model.probability_adoption and rand > self.model.probability_mutation:
                 self.new_strategy =  strongest_neighbour.strategy
@@ -160,7 +141,8 @@ class RPSAgent(GameAgent):
         for num, neighbor in enumerate(self.model.grid.neighbor_iter(self.pos)):
             if self.model.game_mode == "Pure":
                 self.scores[num] = 0
-                self.scores[num] += self.model.payoff[self.move, neighbor.move]
+                if random.random() < self.model.probability_of_playing:
+                    self.scores[num] += self.model.payoff[self.move, neighbor.move]
             elif self.model.game_mode == "Impure":
                 score = 0
                 for i in range(self.model.num_moves_per_set):
