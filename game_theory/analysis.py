@@ -105,7 +105,23 @@ def calculate_extinction_time(model):
             # there is one homogenous population
             # if it is homogenous we can break out of the loop
             return step_num
-    return len(populations) + 1
+    return np.inf
+
+def calculate_stable_transient(model):
+
+    all_population_data = model.datacollector_populations.get_model_vars_dataframe()
+    for population_data in all_population_data:
+        populations = all_population_data[population_data]
+        for step_num, i in enumerate(populations):
+            if np.ceil(populations[0] * model.transient_threshold) >= populations[i]\
+                    or np.floor(populations[0] * (1 - model.transient_threshold)) <= populations[i]:
+                return step_num
+
+
+def calculate_extinction_probability(model, dependent):
+    dependent_successful = list(filter(lambda a: a != np.inf, dependent))
+    return len(dependent_successful) / len(dependent)
+
 
 
 def cross_sectional_graph():

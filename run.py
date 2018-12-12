@@ -9,7 +9,7 @@ from game_theory.model import RPSModel, PDModel
 from game_theory.config import Config
 import numpy as np
 import matplotlib.pyplot as plt
-from game_theory.analysis import fft_analysis, ternary_plot, calculate_extinction_time
+from game_theory.analysis import calculate_extinction_time, calculate_extinction_probability
 
 import statistics
 
@@ -18,6 +18,7 @@ def run_model(config, batchrunning):
     if batchrunning['variable_output']:
         dependent_average = []
         dependent_y_err = []
+        extinction_probability = []
         for variable in trange(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
             config[batchrunning['variable']] = variable
             dependent = []
@@ -28,6 +29,7 @@ def run_model(config, batchrunning):
                     model = PDModel(config)
                 model.run(batchrunning['num_steps'])
                 dependent.append(calculate_extinction_time(model))
+            extinction_probability.append(calculate_extinction_probability(model, dependent))
             dependent_average.append(statistics.mean(dependent))
             dependent_y_err.append(statistics.stdev(dependent))
         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])

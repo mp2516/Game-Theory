@@ -3,6 +3,7 @@
     "variable_output": true,
     "variable": "dimension",
     "dependent": "extinction_time",
+    "transient_threshold": 0.1,
     "start": 3,
     "stop": 12,
     "step": 1,
@@ -10,15 +11,15 @@
     "num_steps": 100
   },
   "parameters": {
-    "dimension": 3,
+    "dimension": 6,
     "pixel_dimension": 500,
-    "simulation": false,
+    "simulation": true,
     "game_type": "RPS",
     "num_moves_per_set": 1,
     "initial_population_sizes": [
-      0.5,
-      0.3,
-      0.2
+      0.34,
+      0.33,
+      0.33
     ],
     "biomes": false,
     "agent_strategies": [
@@ -32,12 +33,14 @@
       "S"
     ],
     "game_mode": "Pure",
-    "cull_score": 0,
+    "cull_score": -5,
     "probability_cull_score_decrease": 0,
     "probability_adoption": 1,
     "strength_of_adoption": 1,
     "probability_mutation": 0,
     "strength_of_mutation": 0.001,
+    "probability_exchange": 0,
+    "probability_playing": 0,
     "epsilon": 1
   }
 }

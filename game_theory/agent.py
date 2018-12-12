@@ -48,6 +48,16 @@ class GameAgent(Agent):
             else:
                 self.strategy = np.random.choice(a=self.model.agent_strategies, p=self.model.initial_population_sizes)
 
+    def exchange(self):
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        if random.random() < self.model.probability_of_exchange:
+            random_neighbor = random.choice([neighbor for neighbor in self.neighbors])
+            self.new_strategy = random_neighbor.strategy
+            random_neighbor.new_strategy = self.strategy
+        else:
+            self.new_strategy = self.strategy
+            self.new_probabilities = self.probabilities
+
     def evolve_strategy(self):
 
         # mutate the agents with a probability
@@ -63,30 +73,30 @@ class GameAgent(Agent):
                     [prob * (1/self.model.strength_of_mutation) for prob in self.probabilities])
 
         # kill the weakest agents
-        if self.total_score <= self.model.cull_score and random.random() <= self.model.probability_adoption:
-            self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
-            strongest_neighbour = self.neighbors[np.argmax(
-                [neighbour.total_score for neighbour in self.model.grid.neighbor_iter(self.pos)])]
+        elif self.total_score <= self.model.cull_score:
+            self.new_strategy = "Empty"
+            if random.random() <= self.model.probability_adoption:
+                self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+                strongest_neighbour = self.neighbors[np.argmax(
+                    [neighbour.total_score for neighbour in self.model.grid.neighbor_iter(self.pos)])]
+                if strongest_neighbour.total_score > self.total_score:
+                    if self.model.game_mode == "Impure":
+                        for num, i in enumerate(self.probabilities):
+                            for j in strongest_neighbour.probabilities:
+                                # bad_agents probabilities will tend towards the probabilities of the strongest_neighbour
+                                # with the strength_of_adoption dictating how much it tends towards
+                                self.new_probabilities[num] = i + ((j - i) * self.model.strength_of_adoption)
 
-            if strongest_neighbour.total_score > self.total_score:
-
-                if self.model.game_mode == "Impure":
-                    for num, i in enumerate(self.probabilities):
-                        for j in strongest_neighbour.probabilities:
-                            # bad_agents probabilities will tend towards the probabilities of the strongest_neighbour
-                            # with the strength_of_adoption dictating how much it tends towards
-                            self.new_probabilities[num] = i + ((j - i) * self.model.strength_of_adoption)
-
-                elif self.model.game_mode == "Pure":
-                    self.new_strategy = strongest_neighbour.strategy
-                    # FIXME: mutation is occuring even in homogenous systems
-                    self.model.num_mutating += 1
+                    elif self.model.game_mode == "Pure":
+                        self.new_strategy = strongest_neighbour.strategy
+                        # FIXME: mutation is occuring even in homogenous systems
+                        self.model.num_mutating += 1
+                else:
+                    self.new_strategy = self.strategy
+                    self.new_probabilities = self.probabilities
             else:
                 self.new_strategy = self.strategy
                 self.new_probabilities = self.probabilities
-        else:
-            self.new_strategy = self.strategy
-            self.new_probabilities = self.probabilities
 
 
     def kill_weak(self):

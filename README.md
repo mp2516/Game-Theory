@@ -79,3 +79,7 @@ A textbook like paper describing the fundementals of evolutionary games, cited a
 
 1994, a fundemental paper that started the field off
 [Vortices and Strings in Model ecosystems](https://journals.aps.org/pre/pdf/10.1103/PhysRevE.50.3401)
+
+##### Real World Applications
+
+Volunteering leads to rock–paper–scissors dynamics in a public goods game

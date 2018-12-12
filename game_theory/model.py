@@ -88,6 +88,9 @@ class GameGrid(Model):
         self.probability_mutation = config['probability_mutation']
         self.strength_of_mutation = config['strength_of_mutation']
 
+        self.probability_exchange = config['probability_exchange']
+        self.probability_playing = config['probability_playing']
+
         self.agent_strategies = config['agent_strategies']
         self.agent_moves = config['agent_moves']
 
@@ -145,12 +148,19 @@ class RPSModel(GameGrid):
         self.payoff = {("R", "R"): 0,
                        ("R", "P"): -self.epsilon,
                        ("R", "S"): 1,
+                       ("R", None): 0,
                        ("P", "R"): 1,
                        ("P", "P"): 0,
                        ("P", "S"): -self.epsilon,
+                       ("P", None): 0,
                        ("S", "R"): -self.epsilon,
                        ("S", "P"): 1,
-                       ("S", "S"): 0}
+                       ("S", "S"): 0,
+                       ("S", None): 0,
+                       (None, "R"): 0,
+                       (None, "P"): 0,
+                       (None, "S"): 0,
+                       (None, None): 0}
 
         for x in range(self.dimension):
             for y in range(self.dimension):
