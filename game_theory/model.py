@@ -20,7 +20,7 @@ def key(x, y):
     return int(0.5 * (x + y) * (x + y + 1) + y)
 
 
-def biome_boundaries(initial_population_probabilities, dimension):
+def biome_boundaries(initial_population_probabilities, width):
     """
     Args:
         initial_population_probabilities: the proportion of the grid that is filled with each probability
@@ -32,10 +32,10 @@ def biome_boundaries(initial_population_probabilities, dimension):
         This is a form of allocation problem, here I have used the algorithm called the Hungarian Algorithm
         https://hackernoon.com/the-assignment-problem-calculating-the-minimum-matrix-sum-python-1bba7d15252d
     """
-    exact_split = [(prob*dimension) for prob in initial_population_probabilities]
+    exact_split = [(prob*width) for prob in initial_population_probabilities]
     probs_round = [int(np.floor(split)) for split in exact_split]
     remainder = [(exact_split[i] - prob_round) for (i, prob_round) in enumerate(probs_round)]
-    while sum(probs_round) < dimension:
+    while sum(probs_round) < width:
         index = int(np.argmax(remainder))
         probs_round[index] += 1
         remainder[index] = 0
@@ -66,8 +66,16 @@ class GameGrid(Model):
         '''
         super().__init__()
 
-        self.dimension = config['dimension']
-        self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
+        if config['square']:
+            self.dimension = config['dimension']
+            self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
+            self.height = self.dimension
+            self.width = self.dimension
+        else:
+            self.height = config['height']
+            self.width = config['width']
+            self.grid = SingleGrid(self.width, self.height, torus=True)
+
         self.step_num = 0
         self.num_mutating = 0
         self.fraction_mutating = 0
@@ -79,7 +87,7 @@ class GameGrid(Model):
         self.initial_population_sizes = config['initial_population_sizes']
         self.biomes = config['biomes']
         if self.biomes:
-            self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.dimension)
+            self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.width)
 
         self.cull_score = config['cull_score']
         self.probability_adoption = config['probability_adoption']
@@ -148,22 +156,22 @@ class RPSModel(GameGrid):
         self.payoff = {("R", "R"): 0,
                        ("R", "P"): -self.epsilon,
                        ("R", "S"): 1,
-                       ("R", None): 0,
+                       ("R", "E"): 0,
                        ("P", "R"): 1,
                        ("P", "P"): 0,
                        ("P", "S"): -self.epsilon,
-                       ("P", None): 0,
+                       ("P", "E"): 0,
                        ("S", "R"): -self.epsilon,
                        ("S", "P"): 1,
                        ("S", "S"): 0,
-                       ("S", None): 0,
-                       (None, "R"): 0,
-                       (None, "P"): 0,
-                       (None, "S"): 0,
-                       (None, None): 0}
+                       ("S", "E"): 0,
+                       ("E", "R"): 0,
+                       ("E", "P"): 0,
+                       ("E", "S"): 0,
+                       ("E", "E"): 0}
 
-        for x in range(self.dimension):
-            for y in range(self.dimension):
+        for x in range(self.width):
+            for y in range(self.height):
                 agent = RPSAgent([x, y], self)
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
@@ -208,6 +216,7 @@ class RPSModel(GameGrid):
         self.fraction_mutating = self.num_mutating / (self.dimension**2)
         self.datacollector_scores.collect(self)
         self.datacollector_mutating_agents.collect(self)
+        # logger.error(" " + "\n", color=41)
 
 
 class PDModel(GameGrid):

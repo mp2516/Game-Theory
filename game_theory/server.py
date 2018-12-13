@@ -36,9 +36,19 @@ def agent_portrayal(agent):
     return portrayal
 
 
+if model_config.parameters['square']:
+    model_height = model_config.parameters['dimension']
+    model_width = model_config.parameters['dimension']
+    model_pixel_width = model_config.parameters['pixel_dimension']
+    model_pixel_height = model_config.parameters['pixel_dimension']
+else:
+    model_height = model_config.parameters['height']
+    model_width = model_config.parameters['width']
+    model_pixel_width = model_config.parameters['pixel_width']
+    model_pixel_height = model_config.parameters['pixel_height']
+
 grid = CanvasGrid(agent_portrayal,
-                  model_config.parameters['dimension'], model_config.parameters['dimension'],
-                  model_config.parameters['pixel_dimension'], model_config.parameters['pixel_dimension'])
+                  model_width, model_height, model_pixel_width, model_pixel_height)
 
 # it is essential the label matches that collected by the datacollector
 if model_config.parameters['game_type'] == "RPS":

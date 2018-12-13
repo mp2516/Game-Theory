@@ -3,6 +3,7 @@ import scipy.fftpack
 from matplotlib import pyplot as plt
 import ternary
 import random
+import statistics
 
 def fft_analysis(model):
     all_population_data = model.datacollector_populations.get_model_vars_dataframe()
@@ -77,6 +78,19 @@ def histogram(model):
         print(all_population_scores[population_scores])
 
 
+def histogram_results(raw_data, num_steps):
+
+    filtered_raw_data = list(filter(lambda a: a != np.inf, raw_data))
+    print(filtered_raw_data)
+    bins = np.arange(num_steps)
+    plt.hist(filtered_raw_data, bins)
+    plt.xlabel("Extinction Time")
+    plt.ylabel("Number of sims")
+    plt.legend(loc="best")
+
+
+
+
 def pie_chart(model):
     all_population_data = model.datacollector_populations.get_model_vars_dataframe()
     current_populations = []
@@ -88,9 +102,22 @@ def pie_chart(model):
     plt.pie(current_populations, labels=[a for a in all_population_data.columns])
 
 
+def collect_dependent_raw_data(model, dependent_name):
+    if dependent_name == "extinction_probability" or dependent_name == "extinction_time":
+        return calculate_extinction_time(model)
+
+
+def calculate_dependent(raw_data, dependent_name):
+    if dependent_name == "extinction_probability":
+        return calculate_extinction_prob(raw_data)
+
+
+def calculate_dependent_error(raw_data, dependent_name, num_sim_batches):
+    if dependent_name == "extinction_probability":
+        return calculate_extinction_prob_sd(raw_data, num_sim_batches)
+
 def calculate_extinction_time(model):
     """
-
     :param model:
     :return: np.inf if the population remains stable for the whole simulation, step_num if the population reaches
         extinction after a certain period of time.
@@ -118,9 +145,29 @@ def calculate_stable_transient(model):
                 return step_num
 
 
-def calculate_extinction_probability(model, dependent):
-    dependent_successful = list(filter(lambda a: a != np.inf, dependent))
-    return len(dependent_successful) / len(dependent)
+def calculate_extinction_prob(raw_data):
+    dependent_successful = list(filter(lambda a: a != np.inf, raw_data))
+    return len(dependent_successful) / len(raw_data)
+
+
+def calculate_extinction_prob_sd(raw_data, num_sim_batches):
+
+    def chunk_it(seq, num):
+        avg = len(seq) / float(num)
+        out = []
+        last = 0.0
+        while last < len(seq):
+            out.append(seq[int(last):int(last + avg)])
+            last += avg
+        return out
+
+    # raw_data_filtered = list(filter(lambda a: a != np.inf, raw_data))
+    split_raw_data = chunk_it(raw_data, num_sim_batches)
+    split_extinction_prob = []
+    for split in split_raw_data:
+        split_extinction_prob.append(calculate_extinction_prob(split))
+    return statistics.stdev(split_extinction_prob)
+
 
 
 

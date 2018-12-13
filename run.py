@@ -9,34 +9,43 @@ from game_theory.model import RPSModel, PDModel
 from game_theory.config import Config
 import numpy as np
 import matplotlib.pyplot as plt
-from game_theory.analysis import calculate_extinction_time, calculate_extinction_probability
+from game_theory.analysis import collect_dependent_raw_data, calculate_dependent, calculate_dependent_error, histogram_results
 
 import statistics
 
 
 def run_model(config, batchrunning):
     if batchrunning['variable_output']:
-        dependent_average = []
-        dependent_y_err = []
-        extinction_probability = []
+        dependent = []
+        dependent_error = []
         for variable in trange(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
-            config[batchrunning['variable']] = variable
-            dependent = []
+            config[batchrunning['variable_name']] = variable
+            dependent_raw_data = []
             for _ in range(batchrunning['num_sims_per_interval']):
                 if config['game_type'] == "RPS":
                     model = RPSModel(config)
                 else:
                     model = PDModel(config)
                 model.run(batchrunning['num_steps'])
-                dependent.append(calculate_extinction_time(model))
-            extinction_probability.append(calculate_extinction_probability(model, dependent))
-            dependent_average.append(statistics.mean(dependent))
-            dependent_y_err.append(statistics.stdev(dependent))
+                dependent_raw_data.append(collect_dependent_raw_data(model, batchrunning['dependent_name']))
+            dependent.append(calculate_dependent(dependent_raw_data, batchrunning['dependent_name']))
+            dependent_error.append(calculate_dependent_error(dependent_raw_data,
+                                                             batchrunning['dependent_name'],
+                                                             batchrunning['num_sim_batches']))
+            # histogram_results(dependent_raw_data, batchrunning['num_steps'])
+        print(dependent_raw_data)
         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
+        print(variable)
+        print(dependent)
+        print(dependent_error)
         plt.figure()
-        plt.errorbar(variable, dependent_average, yerr=dependent_y_err)
-        plt.xlabel(batchrunning['variable'])
-        plt.ylabel(batchrunning['dependent'])
+        plt.scatter(variable, dependent, c='b')
+        plt.errorbar(variable, dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
+        plt.xlabel(batchrunning['variable_name'])
+        plt.ylabel(batchrunning['dependent_name'])
+        plt.xlim([batchrunning['start'], batchrunning['stop']])
+        plt.ylim([0, 1])
+        plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
         plt.show()
         print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
         # fft_analysis(model)
