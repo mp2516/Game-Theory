@@ -1,10 +1,10 @@
 {
   "batchrunning": {
     "variable_output": true,
-    "variable_name": "height",
-    "dependent_name": "extinction_probability",
+    "variable_name": "dimension",
+    "dependent_name": "environment_death",
     "transient_threshold": 0.1,
-    "start": 1,
+    "start": 2,
     "stop": 13,
     "step": 1,
     "num_sims_per_interval": 100,
@@ -12,14 +12,14 @@
     "num_steps": 30
   },
   "parameters": {
-    "square": false,
-    "dimension": 9,
+    "square": true,
+    "dimension": 32,
     "height": 1,
     "width": 10,
     "pixel_dimension": 500,
     "pixel_height": 50,
     "pixel_width": 500,
-    "simulation": true,
+    "simulation": false,
     "game_type": "RPS",
     "num_moves_per_set": 1,
     "initial_population_sizes": [
@@ -39,7 +39,7 @@
       "S"
     ],
     "game_mode": "Pure",
-    "cull_score": 0,
+    "cull_score": -1,
     "probability_cull_score_decrease": 0,
     "probability_adoption": 1,
     "strength_of_adoption": 0.5,

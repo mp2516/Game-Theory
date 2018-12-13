@@ -50,7 +50,7 @@ class GameAgent(Agent):
 
     def exchange(self):
         self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
-        if random.random() < self.model.probability_of_exchange:
+        if random.random() < self.model.probability_exchange:
             random_neighbor = random.choice([neighbor for neighbor in self.neighbors])
             self.new_strategy = random_neighbor.strategy
             random_neighbor.new_strategy = self.strategy
@@ -102,6 +102,21 @@ class GameAgent(Agent):
             self.new_probabilities = self.probabilities
 
 
+    def identify_crowded(self):
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        if all(self.strategy == neighbour.strategy for neighbour in self.neighbors):
+            self.model.crowded_players.append(self)
+
+    #        crowded_players = [player for player in self.model.schedule.agents if all(self.strategy == neighbour.strategy for neighbour in self.neighbors)]
+
+
+    def kill_crowded(self):
+        for player in self.model.crowded_players:
+            player.new_strategy = "empty"
+
+#        self.model.crowded_players.clear()
+
+
     def kill_weak(self):
         if random.random() < self.model.probability_cull_score_decrease:
             cull_threshold = self.model.cull_score - 1
@@ -109,6 +124,28 @@ class GameAgent(Agent):
             cull_threshold = self.model.cull_score
         if self.total_score < cull_threshold and random.random() <= self.model.probability_adoption:
             self.new_strategy = "empty"
+        else:
+            self.new_strategy = self.strategy
+            self.new_probabilities = self.probabilities
+
+
+    def reproduce(self):
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        if not all(neighbour.strategy == "empty" for neighbour in self.neighbors):
+            neighbours_not_empty = [neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"]
+            random.shuffle(neighbours_not_empty)
+            strongest_neighbour = neighbours_not_empty[
+                np.argmax([neighbour.total_score for neighbour in neighbours_not_empty])]
+            random_neighbour = random.choice(neighbours_not_empty)
+            rand = random.random()
+            if self.strategy == "empty" and strongest_neighbour.total_score >= 0 and rand <= self.model.probability_adoption and rand > self.model.probability_mutation:
+                self.new_strategy = strongest_neighbour.strategy
+            elif self.strategy == "empty" and strongest_neighbour.total_score >= 0 and rand <= self.model.probability_adoption and rand <= self.model.probability_mutation:
+                self.new_strategy = random.choice(
+                    random.choices(population=["all_r", "all_p", "all_s"], weights=[100, 100, 100], k=1))
+        #            else:
+        #                self.new_strategy = self.strategy
+        #                self.new_probabilities = self.probabilities
         else:
             self.new_strategy = self.strategy
             self.new_probabilities = self.probabilities

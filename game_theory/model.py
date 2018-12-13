@@ -68,7 +68,7 @@ class GameGrid(Model):
 
         if config['square']:
             self.dimension = config['dimension']
-            self.grid = SingleGrid(self.dimension, self.dimension, torus=True)
+            self.grid = SingleGrid(self.dimension, self.dimension, torus=False)
             self.height = self.dimension
             self.width = self.dimension
         else:
@@ -79,6 +79,7 @@ class GameGrid(Model):
         self.step_num = 0
         self.num_mutating = 0
         self.fraction_mutating = 0
+        self.crowded_players = []
 
         self.num_moves_per_set = config['num_moves_per_set']
         self.game_type = config['game_type']
@@ -209,6 +210,26 @@ class RPSModel(GameGrid):
             agent.evolve_strategy()
         for agent in self.schedule.agents:
             agent.implement_strategy()
+        for agent in self.schedule.agents:
+            agent.exchange()
+
+        # for agent in self.schedule.agents:
+        #     agent.increment_score()
+        # for agent in self.schedule.agents:
+        #     agent.identify_crowded()
+        # for agent in self.schedule.agents:
+        #     agent.kill_weak()
+        # for agent in self.schedule.agents:
+        #     agent.implement_strategy()
+        # for agent in self.schedule.agents:
+        #     agent.reproduce()
+        # for agent in self.schedule.agents:
+        #     agent.implement_strategy()
+        # for agent in self.schedule.agents:
+        #     agent.exchange()
+        # for agent in self.schedule.agents:
+        #     agent.implement_strategy()
+
         if self.game_mode == "Pure":
             self.datacollector_populations.collect(self)
         elif self.game_mode == "Impure":

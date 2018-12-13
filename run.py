@@ -18,10 +18,11 @@ def run_model(config, batchrunning):
     if batchrunning['variable_output']:
         dependent = []
         dependent_error = []
-        for variable in trange(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
+        histogram_data = []
+        for variable in range(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
             config[batchrunning['variable_name']] = variable
             dependent_raw_data = []
-            for _ in range(batchrunning['num_sims_per_interval']):
+            for num in trange(batchrunning['num_sims_per_interval']):
                 if config['game_type'] == "RPS":
                     model = RPSModel(config)
                 else:
@@ -32,7 +33,10 @@ def run_model(config, batchrunning):
             dependent_error.append(calculate_dependent_error(dependent_raw_data,
                                                              batchrunning['dependent_name'],
                                                              batchrunning['num_sim_batches']))
-            # histogram_results(dependent_raw_data, batchrunning['num_steps'])
+        #     histogram_data.append(dependent_raw_data)
+        # histogram_results(histogram_data, batchrunning['num_steps'])
+
+        plt.show()
         print(dependent_raw_data)
         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
         print(variable)
@@ -44,8 +48,8 @@ def run_model(config, batchrunning):
         plt.xlabel(batchrunning['variable_name'])
         plt.ylabel(batchrunning['dependent_name'])
         plt.xlim([batchrunning['start'], batchrunning['stop']])
-        plt.ylim([0, 1])
-        plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
+        plt.ylim([0, 1.05])
+        # plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
         plt.show()
         print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
         # fft_analysis(model)
@@ -55,6 +59,9 @@ def run_model(config, batchrunning):
         # elif config.game_type == "Impure":
         #     labels = ["P(Rock)", "P(Paper)", "P(Scissors)"]
         #     ternary_plot(model, labels)
+
+a = [1.0, 1.0, 0.95, 0.99, 0.98, 0.71, 0.57, 0.28, 0.19, 0.12, 0.1, 0.02]
+b = [0.0, 0.0, 0.05270462766947298, 0.031622776601683784, 0.04216370213557838, 0.11005049346146122, 0.09486832980505136, 0.16193277068654824, 0.15951314818673865, 0.13165611772087665, 0.10540925533894598, 0.04216370213557839]
 
 
 file_name = "game_theory/game_configs/rock_paper_scissors.json"
