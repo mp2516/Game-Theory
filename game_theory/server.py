@@ -22,7 +22,7 @@ def agent_portrayal(agent):
 
     if model_config.parameters['game_type'] == "RPS":
         portrayal["Color"] = Color(rgb=[rgb / max(agent.probabilities) for rgb in agent.probabilities]).hex
-        portrayal["Opacity"] = agent.total_score / 5
+        # portrayal["Opacity"] = agent.total_score / 5
         if agent.strategy == "empty":
             portrayal["Color"] = "black"
 
@@ -34,6 +34,30 @@ def agent_portrayal(agent):
                              "random": "Pink"}
         portrayal["Color"] = strategy_to_color[agent.strategy]
     return portrayal
+
+
+def chart_populations(labels):
+    return ChartModule(labels, data_collector_name='datacollector_populations')
+
+
+def chart_scores(labels):
+    for row in labels:
+        row["Label"] += " Scores"
+    return ChartModule(labels, data_collector_name='datacollector_scores')
+
+
+def evolving_agents():
+    return ChartModule([{"Label": "Num Evolving Agents", "Color": "black"}],
+                       data_collector_name='datacollector_evolving_agents')
+
+
+def histogram_module():
+    return HistogramModule(list(range(-30, 30)), model_config.parameters['pixel_dimension'], 200)
+
+
+def mutating_agents():
+    return ChartModule([{"Label": "Num Mutating Agents", "Color": "black"}],
+                       data_collector_name='datacollector_mutating_agents')
 
 
 if model_config.parameters['square']:
@@ -48,55 +72,52 @@ else:
     model_pixel_height = model_config.parameters['pixel_height']
 
 grid = CanvasGrid(agent_portrayal,
-                  model_width, model_height, model_pixel_width, model_pixel_height)
+                  model_width,
+                  model_height,
+                  model_pixel_width,
+                  model_pixel_height)
 
 # it is essential the label matches that collected by the datacollector
+
 if model_config.parameters['game_type'] == "RPS":
+    model_name = "Rock Paper Scissors Simulator"
+    model_type = RPSModel
+
     if model_config.parameters['game_mode'] == "Pure":
-        chart_populations = ChartModule([{"Label": "Pure Rock", "Color": "red"},
-                                         {"Label": "Pure Paper", "Color": "green"},
-                                         {"Label": "Pure Scissors", "Color": "blue"}],
-                                        data_collector_name='datacollector_populations')
-        chart_scores = ChartModule([{"Label": "Pure Rock Scores", "Color": "red"},
-                                    {"Label": "Pure Paper Scores", "Color": "green"},
-                                    {"Label": "Pure Scissors Scores", "Color": "blue"}],
-                                   data_collector_name='datacollector_scores')
-        mutating_agents = ChartModule([{"Label": "Num Mutating Agents", "Color": "black"}],
-                                      data_collector_name='datacollector_mutating_agents')
+        model_labels = [{"Label": "Pure Rock", "Color": "red"},
+                        {"Label": "Pure Paper", "Color": "green"},
+                        {"Label": "Pure Scissors", "Color": "blue"}]
+        model_visualisation = [grid,
+                               chart_populations(model_labels),
+                               chart_scores(model_labels),
+                               evolving_agents()]
 
-        # histogram = HistogramModule(list(range(-30, 30)),
-        #                       model_config.pixel_dimension, 200)
+        if model_config.parameters['probability_mutation'] > 0:
+            model_visualisation.append(mutating_agents())
 
-        server = ModularServer(RPSModel,
-                               [grid, chart_populations, chart_scores, mutating_agents],
-                               "Rock Paper Scissors Simulator",
-                               {"config": model_config.parameters})
     else:
-        # elif the game_mode is Impure
-        server = ModularServer(RPSModel,
-                               [grid],
-                               "Rock Paper Scissors Simulator",
-                               {"config": model_config.parameters})
+        # the game_mode is "Impure"
+        model_visualisation = [grid]
 
-else:
-    # elif the game type is Prisoner's Dilemma
-    chart_populations = ChartModule([{"Label": "cooperating", "Color": "Red"},
-                                     {"Label": "defecting", "Color": "Blue"},
-                                     {"Label": "tit_for_tat", "Color": "Green"},
-                                     {"Label": "spiteful", "Color": "Yellow"},
-                                     {"Label": "random", "Color": "Pink"}],
-                                    data_collector_name='datacollector_populations')
-    chart_scores = ChartModule([{"Label": "cooperating Scores", "Color": "Red"},
-                                {"Label": "defecting Scores", "Color": "Blue"},
-                                {"Label": "tit_for_tat Scores", "Color": "Green"},
-                                {"Label": "spiteful Scores", "Color": "Yellow"},
-                                {"Label": "random Scores", "Color": "Pink"}],
-                               data_collector_name='datacollector_scores')
-    server = ModularServer(PDModel,
-                           [grid, chart_populations, chart_scores],
-                           "Prisoners Dilemma Simulator",
-                           {"config": model_config.parameters})
+elif model_config.parameters['game_type'] == "PD":
+    model_name = "Prisoners Dilemma Simulator"
+    model_type = PDModel
+    model_labels = [{"Label": "cooperating", "Color": "Red"},
+                    {"Label": "defecting", "Color": "Blue"},
+                    {"Label": "tit_for_tat", "Color": "Green"},
+                    {"Label": "spiteful", "Color": "Yellow"},
+                    {"Label": "random", "Color": "Pink"}]
+    model_visualisation = [grid,
+                           chart_populations(model_labels),
+                           chart_scores(model_labels)]
 
+    if model_config.parameters['probability_mutation'] > 0:
+        model_visualisation.append(mutating_agents())
+
+
+server = ModularServer(model_cls=model_type,
+                       visualization_elements=model_visualisation,
+                       name=model_name,
+                       model_params={"config": model_config.parameters})
 server.verbose = False
-
 logger.critical("Started server.")

@@ -5,3 +5,4 @@ colour
 matplotlib
 python-ternary
 tqdm
+tabulate

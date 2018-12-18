@@ -66,6 +66,7 @@ class GameAgent(Agent):
                 available_strategies = [strategy for strategy in self.model.agent_strategies
                                         if strategy != self.strategy]
                 self.new_strategy = random.choice(available_strategies)
+                self.model.num_mutating += 1
             elif self.model.game_mode == "Impure":
                 # the larger the strength_of_mutation
                 # the smaller the weights which means a bigger variance on the initial probabilities
@@ -92,8 +93,8 @@ class GameAgent(Agent):
                 elif self.model.game_mode == "Pure":
                     self.new_strategy = strongest_neighbour.strategy
                     # FIXME: mutation is occuring even in homogenous systems
-                    self.model.num_mutating += 1
-                    logger.debug("Old strategy: {}, new strategy: {}, mutation number: {}".format(self.strategy, self.new_strategy, self.model.num_mutating))
+                    self.model.num_evolving += 1
+                    logger.debug("Old strategy: {}, new strategy: {}, mutation number: {}".format(self.strategy, self.new_strategy, self.model.num_evolving))
                 else:
                     self.new_strategy = self.strategy
                     self.new_probabilities = self.probabilities

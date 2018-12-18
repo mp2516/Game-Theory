@@ -1,18 +1,10 @@
-# from game_theory.server import file_name
-
-import cProfile
-import sys
-
-from mesa.batchrunner import BatchRunner
 from tqdm import trange
 from game_theory.model import RPSModel, PDModel
 from game_theory.config import Config
 import numpy as np
 import matplotlib.pyplot as plt
-from game_theory.analysis import collect_dependent_raw_data, calculate_dependent, calculate_dependent_error, histogram_results
-
-import statistics
-
+from tabulate import tabulate
+from game_theory.analysis import RPSAnalysis
 
 def run_model(config, batchrunning):
     if batchrunning['variable_output']:
@@ -22,7 +14,7 @@ def run_model(config, batchrunning):
         for variable in range(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
             config[batchrunning['variable_name']] = variable
             dependent_raw_data = []
-            for num in trange(batchrunning['num_sims_per_interval']):
+            for _ in trange(batchrunning['num_sims_per_interval']):
                 if config['game_type'] == "RPS":
                     model = RPSModel(config)
                 else:
@@ -33,15 +25,15 @@ def run_model(config, batchrunning):
             dependent_error.append(calculate_dependent_error(dependent_raw_data,
                                                              batchrunning['dependent_name'],
                                                              batchrunning['num_sim_batches']))
-        #     histogram_data.append(dependent_raw_data)
-        # histogram_results(histogram_data, batchrunning['num_steps'])
+            if batchrunning['histogram']:
+                histogram_data.append(dependent_raw_data)
 
-        plt.show()
-        print(dependent_raw_data)
+        if batchrunning['histogram']:
+            RPSAnalysis.histogram_results(histogram_data, batchrunning['num_steps'])
+
+        print('\n' + '-' * 30 + '\n Simulation Finished \n' + '-' * 30 + '\n')
+        print(tabulate(zip(dependent, dependent_error), headers=[str(batchrunning['dependent_name']), 'error']))
         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
-        print(variable)
-        print(dependent)
-        print(dependent_error)
         plt.figure()
         plt.scatter(variable, dependent, c='b')
         plt.errorbar(variable, dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
@@ -49,19 +41,20 @@ def run_model(config, batchrunning):
         plt.ylabel(batchrunning['dependent_name'])
         plt.xlim([batchrunning['start'], batchrunning['stop']])
         plt.ylim([0, 1.05])
-        # plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
+        plot_name = str(batchrunning['variable_name'])\
+                    + '_' + str(batchrunning['dependent_name'])\
+                    + '_' + str(batchrunning['num_steps']) + 'n'\
+                    + '_' + str(batchrunning['num_sims_per_interval']) + 'sims'
+        print(plot_name)
+        plt.savefig('graphs/batchruns/' + plot_name + '.png')
         plt.show()
-        print("-" * 10 + "\nSimulation finished!\n" + "-" * 10)
-        # fft_analysis(model)
-        # if config.game_mode == "Pure":
-        #     labels = ["Pure Rock", "Pure Paper", "Pure Scissors"]
-        #     ternary_plot(model, labels)
-        # elif config.game_type == "Impure":
-        #     labels = ["P(Rock)", "P(Paper)", "P(Scissors)"]
-        #     ternary_plot(model, labels)
 
-a = [1.0, 1.0, 0.95, 0.99, 0.98, 0.71, 0.57, 0.28, 0.19, 0.12, 0.1, 0.02]
-b = [0.0, 0.0, 0.05270462766947298, 0.031622776601683784, 0.04216370213557838, 0.11005049346146122, 0.09486832980505136, 0.16193277068654824, 0.15951314818673865, 0.13165611772087665, 0.10540925533894598, 0.04216370213557839]
+    else:
+        if config['game_type'] == "RPS":
+            model = RPSModel(config)
+        else:
+            model = PDModel(config)
+        model.run(batchrunning['num_steps'])
 
 
 file_name = "game_theory/game_configs/rock_paper_scissors.json"

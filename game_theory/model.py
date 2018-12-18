@@ -24,7 +24,7 @@ def biome_boundaries(initial_population_probabilities, width):
     """
     Args:
         initial_population_probabilities: the proportion of the grid that is filled with each probability
-        dimension: the length along one edge of the grid
+        width: the length along one edge of the grid
     Returns:
         A list of x values which indicate the boundaries of the biomes with the least possible error from the
         initial_population_probabilities.
@@ -68,18 +68,16 @@ class GameGrid(Model):
 
         if config['square']:
             self.dimension = config['dimension']
-            self.grid = SingleGrid(self.dimension, self.dimension, torus=False)
+            self.grid = SingleGrid(self.dimension, self.dimension, torus=config['periodic_BC'])
             self.height = self.dimension
             self.width = self.dimension
         else:
             self.height = config['height']
             self.width = config['width']
-            self.grid = SingleGrid(self.width, self.height, torus=True)
+            self.dimension = self.width
+            self.grid = SingleGrid(self.width, self.height, torus=config['periodic_BC'])
 
         self.step_num = 0
-        self.num_mutating = 0
-        self.fraction_mutating = 0
-        self.crowded_players = []
 
         self.num_moves_per_set = config['num_moves_per_set']
         self.game_type = config['game_type']
@@ -111,6 +109,13 @@ class GameGrid(Model):
         self.datacollector_populations = DataCollector()
         self.datacollector_probabilities = DataCollector()
 
+        if self.probability_mutation > 0:
+            self.num_mutating = 0
+            self.fraction_mutating = 0
+        self.num_evolving = 0
+        self.fraction_evolving = 0
+        self.crowded_players = []
+
     def run(self, n):
         ''' Run the model for n steps. '''
         for _ in range(n):
@@ -126,6 +131,7 @@ class GameGrid(Model):
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
                 count += 1
+        print("population" + str(count))
         return count
 
     @staticmethod
@@ -147,6 +153,7 @@ class GameGrid(Model):
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
                 count += agent.total_score
+        print ("score" + str(count))
         return count
 
 
@@ -197,13 +204,22 @@ class RPSModel(GameGrid):
              "Pure Scissors Scores": lambda m: self.count_scores(m, "all_s")}
         )
 
-        self.datacollector_mutating_agents = DataCollector(
-            {"Num Mutating Agents": "fraction_mutating"}
+        if self.probability_mutation > 0:
+            self.datacollector_mutating_agents = DataCollector(
+                {"Num Mutating Agents": "fraction_mutating"}
+            )
+
+        self.datacollector_evolving_agents = DataCollector(
+            {"Num Evolving Agents": "fraction_evolving"}
         )
 
     def step(self):
         self.step_num += 1
-        self.num_mutating = 0
+
+        if self.probability_mutation > 0:
+            self.num_mutating = 0
+        self.num_evolving = 0
+
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
@@ -213,30 +229,20 @@ class RPSModel(GameGrid):
         for agent in self.schedule.agents:
             agent.exchange()
 
-        # for agent in self.schedule.agents:
-        #     agent.increment_score()
-        # for agent in self.schedule.agents:
-        #     agent.identify_crowded()
-        # for agent in self.schedule.agents:
-        #     agent.kill_weak()
-        # for agent in self.schedule.agents:
-        #     agent.implement_strategy()
-        # for agent in self.schedule.agents:
-        #     agent.reproduce()
-        # for agent in self.schedule.agents:
-        #     agent.implement_strategy()
-        # for agent in self.schedule.agents:
-        #     agent.exchange()
-        # for agent in self.schedule.agents:
-        #     agent.implement_strategy()
+        self.datacollector_scores.collect(self)
 
         if self.game_mode == "Pure":
             self.datacollector_populations.collect(self)
         elif self.game_mode == "Impure":
             self.datacollector_probabilities.collect(self)
-        self.fraction_mutating = self.num_mutating / (self.dimension**2)
-        self.datacollector_scores.collect(self)
-        self.datacollector_mutating_agents.collect(self)
+
+        self.fraction_evolving = self.num_evolving / (self.dimension**2)
+        self.datacollector_evolving_agents.collect(self)
+
+        if self.probability_mutation > 0:
+            self.fraction_mutating = self.num_mutating / (self.dimension ** 2)
+            self.datacollector_mutating_agents.collect(self)
+
         # logger.error(" " + "\n", color=41)
 
 
