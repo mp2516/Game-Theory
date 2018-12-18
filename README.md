@@ -74,6 +74,8 @@ The Prisoner's Dilemma demonstrates how simple rules can lead to the emergence o
 
 [Effects of competition on pattern formation in the rock-paper-scissors game](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.84.021912)
 
+[Mobility promotes and jeopardises biodiversity in rock-paper scissors game](https://www.nature.com/articles/nature06095.pdf)
+
 [The Influence of Mobility Rate on Spiral Waves in Spatial Rock-Paper-Scissors Games](https://www.mdpi.com/2073-4336/7/3/24/htm)
 
 [Nonlinear Aspects of Competition Between Three Species](https://epubs.siam.org/doi/10.1137/0129022)
