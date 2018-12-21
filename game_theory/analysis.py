@@ -5,10 +5,110 @@ import ternary
 import random
 import statistics
 
+from tabulate import tabulate
+from tqdm import trange
+
+from game_theory.model import RPSModel, PDModel
+
+
+class BatchRunner:
+    def __init__(self, config_batchrunning, config_model):
+
+        self.num_steps = config_batchrunning['num_steps']
+        self.variable_name = config_batchrunning['variable_name']
+        self.dependent_name = config_batchrunning['dependent_name']
+        self.start = config_batchrunning['start']
+        self.stop = config_batchrunning['stop']
+        self.step = config_batchrunning['step']
+        self.num_sims_per_interval = config_batchrunning['num_sims_per_interval']
+        self.num_sim_batches = config_batchrunning['num_sim_batches']
+
+        self.config_model = config_model
+
+        self.dependent = []
+        self.dependent_error = []
+        self.dependent_raw_data = []
+
+    def run_model(self):
+        for variable in range(self.start, self.stop, self.step):
+            self.config_model[self.variable_name] = variable
+            for _ in trange(self.num_sims_per_interval):
+                if self.config_model['game_type'] == "RPS":
+                    model = RPSModel(self.config_model)
+                else:
+                    model = PDModel(self.config_model)
+                model.run(self.num_steps)
+                self.dependent_raw_data.append(RPSAnalysis.collect_dependent_raw_data(model, self.dependent_name))
+            self.dependent.append(RPSAnalysis.calculate_dependent(self.dependent_raw_data, self.dependent_name))
+            self.dependent_error.append(RPSAnalysis.calculate_dependent_error(self.dependent_raw_data, self.dependent_name, self.num_sim_batches))
+
 
 class RPSAnalysis:
-    def __init__(self, model):
+    def __init__(self, config_batchrunning, model):
         self.all_population_data = model.datacollector_populations.get_model_vars_dataframe()
+        self.all_score_data = model.datacollector_scores.get_model_vars_dataframe()
+        self.all_evolving_data = model.datacollector_evolving_agents.get_model_vars_dataframe()
+
+        self.num_steps = config_batchrunning['num_steps']
+        self.variable_name = config_batchrunning['variable_name']
+        self.dependent_name = config_batchrunning['dependent_name']
+        self.transient_threshold = config_batchrunning['transient_threshold']
+        self.start = config_batchrunning['start']
+        self.stop = config_batchrunning['stop']
+        self.step = config_batchrunning['step']
+        self.num_sims_per_interval = config_batchrunning['num_sims_per_interval']
+        self.num_sim_batches = config_batchrunning['num_sim_batches']
+        self.histogram_bool = config_batchrunning['histogram']
+        self.line_graph_bool = config_batchrunning['line_graph']
+
+    def run_model(self):
+        if batchrunning['variable_output']:
+            dependent = []
+            dependent_error = []
+            histogram_data = []
+            for variable in range(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
+                config[batchrunning['variable_name']] = variable
+                dependent_raw_data = []
+                for _ in trange(batchrunning['num_sims_per_interval']):
+                    if config['game_type'] == "RPS":
+                        model = RPSModel(config)
+                    else:
+                        model = PDModel(config)
+                    model.run(batchrunning['num_steps'])
+                    dependent_raw_data.append(
+                        RPSAnalysis.collect_dependent_raw_data(model, batchrunning['dependent_name']))
+                dependent.append(RPSAnalysis.alculate_dependent(dependent_raw_data, batchrunning['dependent_name']))
+                dependent_error.append(
+                    RPSAnalysis.calculate_dependent_error(dependent_raw_data, batchrunning['dependent_name'],
+                                                          batchrunning['num_sim_batches']))
+                if batchrunning['histogram']:
+                    histogram_data.append(dependent_raw_data)
+
+            if batchrunning['histogram']:
+                RPSAnalysis.histogram_results(histogram_data, batchrunning['num_steps'])
+
+            print('\n' + '-' * 30 + '\n Simulation Finished \n' + '-' * 30 + '\n')
+            print(tabulate(zip(dependent, dependent_error), headers=[str(batchrunning['dependent_name']), 'error']))
+            variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
+            plt.figure()
+            plt.scatter(variable, dependent, c='b')
+            plt.errorbar(variable, dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
+            plt.xlabel(batchrunning['variable_name'])
+            plt.ylabel(batchrunning['dependent_name'])
+            plt.xlim([batchrunning['start'], batchrunning['stop']])
+            plt.ylim([0, 1.05])
+            plot_name = str(batchrunning['variable_name']) + '_' + str(batchrunning['dependent_name']) + '_' + str(
+                batchrunning['num_steps']) + 'n' + '_' + str(batchrunning['num_sims_per_interval']) + 'sims'
+            print(plot_name)
+            plt.savefig('graphs/batchruns/' + plot_name + '.png')
+            plt.show()
+
+        else:
+            if config['game_type'] == "RPS":
+                model = RPSModel(config)
+            else:
+                model = PDModel(config)
+            model.run(batchrunning['num_steps'])
 
     def fft_analysis(self):
         # all_population_data = model.datacollector_populations.get_model_vars_dataframe()
@@ -94,20 +194,19 @@ class RPSAnalysis:
         plt.legend(loc="best")
 
 
-    def pie_chart(model):
-        all_population_data = model.datacollector_populations.get_model_vars_dataframe()
+    def pie_chart(self, model):
         current_populations = []
-        for population_data in all_population_data:
-            populations = all_population_data[population_data]
+        for population_data in self.all_population_data:
+            populations = self.all_population_data[population_data]
             current_populations.append(populations[model.number_of_steps])
         #   current_populations = [a[model.number_of_steps - 1] for a in [population_data for population_data in all_population_data]]
         plt.figure(4, )
         plt.pie(current_populations, labels=[a for a in all_population_data.columns])
 
 
-    def collect_dependent_raw_data(model, dependent_name):
+    def collect_dependent_raw_data(self, model, dependent_name):
         if dependent_name == "extinction_probability" or dependent_name == "extinction_time":
-            return calculate_extinction_time(model)
+            return self.calculate_extinction_time(model)
         elif dependent_name == "environment_death":
             step_num = calculate_environment_death(model)
             if step_num == np.inf:
