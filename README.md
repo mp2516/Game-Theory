@@ -72,6 +72,16 @@ The Prisoner's Dilemma demonstrates how simple rules can lead to the emergence o
 
 [Oscillitory dynamics of Rock-Paper-Scissors](https://ac.els-cdn.com/S0022519310000123/1-s2.0-S0022519310000123-main.pdf?_tid=8a0c7e4f-10b1-40b8-96df-ee9aa9ab4a05&acdnat=1543783308_9aa411b2def1624726fc1b60352bcb9e)
 
+[Effects of competition on pattern formation in the rock-paper-scissors game](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.84.021912)
+
+[Mobility promotes and jeopardises biodiversity in rock-paper scissors game](https://www.nature.com/articles/nature06095.pdf)
+
+[The Influence of Mobility Rate on Spiral Waves in Spatial Rock-Paper-Scissors Games](https://www.mdpi.com/2073-4336/7/3/24/htm)
+
+[Nonlinear Aspects of Competition Between Three Species](https://epubs.siam.org/doi/10.1137/0129022)
+
+[Noise and Correlations in a Spatial Population Model with Cyclic Competition](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.99.238105)
+
 A textbook like paper describing the fundementals of evolutionary games, cited as the founding paper of the field.
 [Evolutionary games and population Dynamics](http://baloun.entu.cas.cz/krivan/papers/kamenice13.pdf)
 
