@@ -4,7 +4,6 @@ import math
 from .logger import logger
 import numpy as np
 
-
 def round_to_unity(probabilities):
     probs_round = [np.floor(prob) for prob in probabilities]
     remainder = [(probabilities[i] - prob_round) for (i, prob_round) in enumerate(probs_round)]
@@ -36,9 +35,7 @@ class GameAgent(Agent):
 
         self.strategy = ""
         self.new_strategy = ""
-
-        self.evolved = False
-        self.neighbors = []
+        self.crowded = []
 
         if self.model.game_mode == "Pure":
             if self.model.biomes:
@@ -152,6 +149,7 @@ class GameAgent(Agent):
             self.new_probabilities = self.probabilities
 
 
+
 class RPSAgent(GameAgent):
 
     def __init__(self, pos, model):
@@ -167,7 +165,9 @@ class RPSAgent(GameAgent):
     def increment_score(self):
         for num, neighbor in enumerate(self.model.grid.neighbor_iter(self.pos)):
             if self.model.game_mode == "Pure":
-                self.scores[num] = self.model.payoff[self.move, neighbor.move]
+                self.scores[num] = 0
+                if random.random() < self.model.probability_of_playing:
+                    self.scores[num] += self.model.payoff[self.move, neighbor.move]
             elif self.model.game_mode == "Impure":
                 score = 0
                 for i in range(self.model.num_moves_per_set):

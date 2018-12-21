@@ -141,14 +141,43 @@ class RPSAnalysis:
         plt.show()
         print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
 
+def histogram(model):
+    all_population_scores = model.datacollector_scores.get_model_vars_dataframe()
+    indexes = all_population_scores.columns
+    current_population_scores = []
+    bins = np.arange((-1) * model.num_moves_per_set * 8, model.num_moves_per_set * 8)
+    for a in indexes:
+        population_scores = all_population_scores[a]
+        current_population_scores.append(population_scores[model.number_of_steps - 1])
+    labels = [a for a in all_population_scores.columns]
+#    print(labels)
+    plt.figure(3,)
+    plt.hist(current_population_scores, bins, label=labels, stacked=True)
+    plt.xlabel("Score")
+    plt.ylabel("Score density")
+    plt.legend(loc="best")
+#    for population_scores in all_population_scores:
+#        print("population scores>>")
+#        print(all_population_scores[population_scores])
 
-    def ternary_plot(self):
-        # all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-        for population_data in self.all_population_data.iterrows():
-            list_norm = [(i / model.height ** 2) for i in self.all_population_data[population_data]]
-            print(list_norm)
-            points = list(zip(list_norm))
-            print(points)
+# =============================================================================
+#     for population_scores in all_population_scores:
+#         print("population scores>>", all_population_scores[population_scores])
+#         plt.hist(all_population_scores[population_scores], bins=4)
+# =============================================================================
+#bins=model.num_moves_per_set*16+1
+#    plt.show()
+
+def ternary_plot(model, labels):
+    all_population_data = model.datacollector_populations.get_model_vars_dataframe()
+    for index, data in all_population_data.iterrows():
+
+
+
+        list_norm = [(i / model.height ** 2) for i in all_population_data[population_data]]
+        print(list_norm)
+        points = list(zip(list_norm))
+        print(points)
 
         figure, tax = ternary.figure(scale=1.0)
         tax.boundary()

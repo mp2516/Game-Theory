@@ -20,9 +20,9 @@ def agent_portrayal(agent):
                  "Filled": "true",
                  "Layer": 0}
 
-    if model_config['game_type'] == "RPS":
-        portrayal["Color"] = Color(rgb=[rgb / max(agent.probabilities) for rgb in agent.probabilities]).hex
-        # portrayal["Opacity"] = agent.total_score / 5
+    if model_config.game_type == "RPS":
+        agent_prob = agent.probabilities
+        portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
         if agent.strategy == "empty":
             portrayal["Color"] = "black"
 

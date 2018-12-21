@@ -184,7 +184,9 @@ class RPSModel(GameGrid):
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
 
-        if self.game_mode == "Pure":
+
+
+               if self.game_mode == "Pure":
             self.datacollector_populations = DataCollector(
                 {"Pure Rock": lambda m: self.count_populations(m, "all_r"),
                  "Pure Paper": lambda m: self.count_populations(m, "all_p"),
