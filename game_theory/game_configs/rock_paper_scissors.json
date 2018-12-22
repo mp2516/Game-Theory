@@ -1,22 +1,56 @@
 {
-  "dimension": 25,
-  "simulation": true,
-  "number_of_steps": 100,
-  "number_of_sims": 100,
-  "game_type": "RPS",
-  "num_moves_per_set": 1,
-
-  "initial_population_sizes": [0.5, 0.3, 0.2],
-  "biomes": false,
-
-  "agent_strategies": ["all_r", "all_s", "all_p"],
-  "agent_moves": ["R", "P", "S"],
-  "game_mode": "Pure",
-
-  "cull_score": 0,
-  "probability_adoption": 1,
-  "strength_of_adoption": 1,
-  "probability_mutation": 0,
-  "strength_of_mutation": 0.001,
-  "epsilon": 1
+  "batchrunning": {
+    "variable_output": true,
+    "variable_name": "probability_exchange",
+    "dependent_name": "biodiversity_lifetime",
+    "transient_threshold": 0.1,
+    "start": 0,
+    "stop": 0.2,
+    "step": 0.1,
+    "num_sims_per_interval": 2,
+    "num_sim_batches": 2,
+    "num_steps": 40
+  },
+  "parameters": {
+    "square": true,
+    "dimension": 25,
+    "height": 1,
+    "width": 10,
+    "pixel_dimension": 500,
+    "pixel_height": 50,
+    "pixel_width": 500,
+    "simulation": false,
+    "periodic_BC": false,
+    "diagonal_neighbours": true,
+    "game_type": "RPS",
+    "num_moves_per_set": 1,
+    "initial_population_sizes": [
+      0.12,
+      0.12,
+      0.12,
+      0.64
+    ],
+    "biomes": false,
+    "agent_strategies": [
+      "all_r",
+      "all_s",
+      "all_p",
+      "empty"
+    ],
+    "agent_moves": [
+      "R",
+      "P",
+      "S"
+    ],
+    "game_mode": "Pure",
+    "cull_score": 0,
+    "probability_cull_score_decrease": 0,
+    "probability_adoption": 1,
+    "strength_of_adoption": 0.5,
+    "probability_mutation": 0,
+    "strength_of_mutation": 0,
+    "probability_exchange": 0.1,
+    "probability_playing": 1,
+    "epsilon": 1
+  }
 }
