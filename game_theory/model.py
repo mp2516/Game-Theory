@@ -89,19 +89,16 @@ class GameGrid(Model):
             self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.width)
 
         self.cull_score = config['cull_score']
+        self.kill_crowded = config['kill_crowded']
+
         self.probability_adoption = config['probability_adoption']
-        self.strength_of_adoption = config['strength_of_adoption']
-
         self.probability_mutation = config['probability_mutation']
-        self.strength_of_mutation = config['strength_of_mutation']
-
         self.probability_exchange = config['probability_exchange']
         self.probability_playing = config['probability_playing']
+        self.probability_death = config['probability_death']
 
         self.agent_strategies = config['agent_strategies']
         self.agent_moves = config['agent_moves']
-
-        self.probability_cull_score_decrease = config['probability_cull_score_decrease']
 
         self.schedule = RandomActivation(self)
         self.running = True
@@ -112,6 +109,7 @@ class GameGrid(Model):
         if self.probability_mutation > 0:
             self.num_mutating = 0
             self.fraction_mutating = 0
+
         self.num_evolving = 0
         self.fraction_evolving = 0
         self.crowded_players = []
@@ -131,7 +129,6 @@ class GameGrid(Model):
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
                 count += 1
-        print("population" + str(count))
         return count
 
     @staticmethod
@@ -153,7 +150,6 @@ class GameGrid(Model):
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
                 count += agent.total_score
-        print ("score" + str(count))
         return count
 
 
@@ -186,19 +182,11 @@ class RPSModel(GameGrid):
 
 
 
-               if self.game_mode == "Pure":
-            self.datacollector_populations = DataCollector(
-                {"Pure Rock": lambda m: self.count_populations(m, "all_r"),
-                 "Pure Paper": lambda m: self.count_populations(m, "all_p"),
-                 "Pure Scissors": lambda m: self.count_populations(m, "all_s")})
-            self.datacollector_populations.collect(self)
-
-        elif self.game_mode == "Impure":
-            self.datacollector_probabilities = DataCollector(
-                {"Rock Probabilities": lambda m: (a.probabilities[0] for a in m.schedule.agents),
-                 "Paper Probabilities": lambda m: (a.probabilities[1] for a in m.schedule.agents),
-                 "Scissors Probabilities": lambda m: (a.probabilities[2] for a in m.schedule.agents)})
-            self.datacollector_probabilities.collect(self)
+        self.datacollector_populations = DataCollector(
+            {"Pure Rock": lambda m: self.count_populations(m, "all_r"),
+             "Pure Paper": lambda m: self.count_populations(m, "all_p"),
+             "Pure Scissors": lambda m: self.count_populations(m, "all_s")})
+             # "Empty": lambda m: self.count_populations(m, "empty")})
 
         self.datacollector_scores = DataCollector(
             {"Pure Rock Scores": lambda m: self.count_scores(m, "all_r"),
@@ -222,21 +210,23 @@ class RPSModel(GameGrid):
             self.num_mutating = 0
         self.num_evolving = 0
 
+        self.datacollector_populations.collect(self)
+
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
-            agent.evolve_strategy()
+            agent.kill_weak()
         for agent in self.schedule.agents:
+            agent.reproduce_strong()
             agent.implement_strategy()
         for agent in self.schedule.agents:
             agent.exchange()
 
-        self.datacollector_scores.collect(self)
+        if self.kill_crowded:
+            for player in self.crowded_players:
+                player.strategy = "empty"
 
-        if self.game_mode == "Pure":
-            self.datacollector_populations.collect(self)
-        elif self.game_mode == "Impure":
-            self.datacollector_probabilities.collect(self)
+        self.datacollector_scores.collect(self)
 
         self.fraction_evolving = self.num_evolving / (self.dimension**2)
         self.datacollector_evolving_agents.collect(self)
@@ -246,46 +236,3 @@ class RPSModel(GameGrid):
             self.datacollector_mutating_agents.collect(self)
 
         # logger.error(" " + "\n", color=41)
-
-
-class PDModel(GameGrid):
-    def __init__(self, config):
-        super().__init__(config)
-        self.payoff = {("C", "C"): 1,
-                       ("C", "D"): 0,
-                       ("D", "C"): 2,
-                       ("D", "D"): 0}
-
-        # Create agents
-        for x in range(self.dimension):
-            for y in range(self.dimension):
-                agent = PDAgent([x,y], self)
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
-
-        self.datacollector_populations = DataCollector(
-            {"cooperating": lambda m: self.count_populations(m, "all_c"),
-             "defecting": lambda m: self.count_populations(m, "all_d"),
-             "tit_for_tat": lambda m: self.count_populations(m, "tit_for_tat"),
-             "spiteful": lambda m: self.count_populations(m, "spiteful"),
-             "random": lambda m: self.count_populations(m, "random")})
-        self.datacollector_populations.collect(self)
-
-        self.datacollector_scores = DataCollector({"cooperating Scores": lambda m: self.count_scores(m, "all_c"),
-                                                   "defecting Scores": lambda m: self.count_scores(m, "all_d"),
-                                                   "tit_for_tat Scores": lambda m: self.count_scores(m, "tit_for_tat"),
-                                                   "spiteful Scores": lambda m: self.count_scores(m, "spiteful"),
-                                                   "random Scores": lambda  m: self.count_scores(m, "random")})
-
-    def step(self):
-        self.schedule.step()
-        self.step_num += 1
-        move_count = 0
-        for i in range(self.num_moves_per_set):
-            for agent in self.schedule.agents:
-                agent.increment_score(move_count)
-        for agent in self.schedule.agents:
-            agent.evolve_strategy()
-        for agent in self.schedule.agents:
-            agent.implement_strategy()
-        self.datacollector_populations.collect(self)

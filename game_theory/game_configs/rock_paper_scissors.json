@@ -1,11 +1,11 @@
 {
   "batchrunning": {
-    "variable_output": true,
+    "variable_output": false,
     "variable_name": "dimension",
     "dependent_name": "extinction_probability",
     "transient_threshold": 0.1,
     "start": 2,
-    "stop": 13,
+    "stop": 6,
     "step": 1,
     "num_sims_per_interval": 100,
     "num_sim_batches": 10,
@@ -22,11 +22,9 @@
     "pixel_height": 50,
     "pixel_width": 500,
     "periodic_BC": true,
-    "epsilon": 1
-    "simulation": true,
-    "game_type": "RPS",
-    "game_mode": "Pure",
-    "cull_score": 1,
+    "epsilon": 1,
+    "cull_score": 0,
+    "kill_crowded": false,
     "num_moves_per_set": 1,
     "initial_population_sizes": [
       0.333,
@@ -36,8 +34,8 @@
     "biomes": false,
     "agent_strategies": [
       "all_r",
-      "all_s",
-      "all_p"
+      "all_p",
+      "all_s"
     ],
     "agent_moves": [
       "R",
@@ -45,10 +43,11 @@
       "S"
     ],
     "probability_adoption": 1,
-    "strength_of_adoption": 0.5,
     "probability_mutation": 0,
-    "strength_of_mutation": 0.001,
     "probability_exchange": 0,
-    "probability_playing": 0,
-  }
+    "probability_playing": 1,
+    "probability_death": 1
+  },
+  "simulation": true,
+  "rate_equations": false
 }

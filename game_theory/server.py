@@ -2,7 +2,7 @@ from mesa.visualization.modules import CanvasGrid
 from game_theory.visualization.ChartVisualization import ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from .config import Config
-from .model import PDModel, RPSModel
+from .model import RPSModel
 from colour import Color
 from .logger import logger
 from game_theory.visualization.HistogramVisualization import HistogramModule
@@ -20,19 +20,11 @@ def agent_portrayal(agent):
                  "Filled": "true",
                  "Layer": 0}
 
-    if model_config.game_type == "RPS":
-        agent_prob = agent.probabilities
-        portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
-        if agent.strategy == "empty":
-            portrayal["Color"] = "black"
+    agent_prob = agent.probabilities
+    portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
+    if agent.strategy == "empty":
+        portrayal["Color"] = "black"
 
-    elif model_config['game_type'] == "PD":
-        strategy_to_color = {"all_c": "Red",
-                             "all_d": "Blue",
-                             "tit_for_tat": "Green",
-                             "spiteful": "Yellow",
-                             "random": "Pink"}
-        portrayal["Color"] = strategy_to_color[agent.strategy]
     return portrayal
 
 
@@ -79,40 +71,20 @@ grid = CanvasGrid(agent_portrayal,
 
 # it is essential the label matches that collected by the datacollector
 
-if model_config['game_type'] == "RPS":
-    model_name = "Rock Paper Scissors Simulator"
-    model_type = RPSModel
+model_name = "Rock Paper Scissors Simulator"
+model_type = RPSModel
 
-    if model_config['game_mode'] == "Pure":
-        model_labels = [{"Label": "Pure Rock", "Color": "red"},
-                        {"Label": "Pure Paper", "Color": "green"},
-                        {"Label": "Pure Scissors", "Color": "blue"}]
-        model_visualisation = [grid,
-                               chart_populations(model_labels),
-                               chart_scores(model_labels),
-                               evolving_agents()]
+model_labels = [{"Label": "Pure Rock", "Color": "red"},
+                {"Label": "Pure Paper", "Color": "green"},
+                {"Label": "Pure Scissors", "Color": "blue"},
+                {"Label": "Empty", "Color": "black"}]
+model_visualisation = [grid,
+                       chart_populations(model_labels),
+                       chart_scores(model_labels),
+                       evolving_agents()]
 
-        if model_config['probability_mutation'] > 0:
-            model_visualisation.append(mutating_agents())
-
-    else:
-        # the game_mode is "Impure"
-        model_visualisation = [grid]
-
-elif model_config['game_type'] == "PD":
-    model_name = "Prisoners Dilemma Simulator"
-    model_type = PDModel
-    model_labels = [{"Label": "cooperating", "Color": "Red"},
-                    {"Label": "defecting", "Color": "Blue"},
-                    {"Label": "tit_for_tat", "Color": "Green"},
-                    {"Label": "spiteful", "Color": "Yellow"},
-                    {"Label": "random", "Color": "Pink"}]
-    model_visualisation = [grid,
-                           chart_populations(model_labels),
-                           chart_scores(model_labels)]
-
-    if model_config['probability_mutation'] > 0:
-        model_visualisation.append(mutating_agents())
+if model_config['probability_mutation'] > 0:
+    model_visualisation.append(mutating_agents())
 
 
 server = ModularServer(model_cls=model_type,

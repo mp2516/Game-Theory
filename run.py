@@ -4,10 +4,17 @@ file_name = "game_theory/game_configs/rock_paper_scissors.json"
 with open(file_name) as d:
     model_config = Config(d.read())
 
-if model_config.parameters['simulation']:
-    from game_theory.server import server
-    server.port = 8521  # The default
-    server.launch()
-else:
-    from game_theory.analysis import RPSAnalysis
-    RPSAnalysis.run_model(model_config.parameters, model_config.batchrunning)
+if __name__ == '__main__':
+    if model_config.simulation:
+        from game_theory.server import server
+        server.port = 8521  # The default
+        server.launch()
+    elif model_config.rate_equations:
+        # from rate_equations.basic_rate_equations import rate_equation
+        from rate_equations.solve_rates import rate_solver
+        # rate_equation()
+        rate_solver(0.01)
+    else:
+        from game_theory.analysis import BatchRunner
+        analysis = BatchRunner(model_config.batchrunning, model_config.parameters)
+        BatchRunner.run_model(analysis)
