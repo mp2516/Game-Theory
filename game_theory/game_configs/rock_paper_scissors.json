@@ -2,7 +2,7 @@
   "batchrunning": {
     "variable_output": false,
     "variable_name": "dimension",
-    "dependent_name": "extinction_probability",
+    "dependent_name": "population",
     "transient_threshold": 0.1,
     "start": 2,
     "stop": 6,
@@ -15,7 +15,7 @@
   },
   "parameters": {
     "square": true,
-    "dimension": 30,
+    "dimension": 20,
     "height": 1,
     "width": 10,
     "pixel_dimension": 500,
@@ -23,7 +23,7 @@
     "pixel_width": 500,
     "periodic_BC": true,
     "epsilon": 1,
-    "cull_score": 0,
+    "cull_score": 1,
     "kill_crowded": false,
     "num_moves_per_set": 1,
     "initial_population_sizes": [

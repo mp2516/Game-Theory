@@ -1,8 +1,8 @@
-from mesa.visualization.modules import CanvasGrid
-from game_theory.visualization.ChartVisualization import ChartModule
+from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from .config import Config
 from .model import RPSModel
+import copy
 from colour import Color
 from .logger import logger
 from game_theory.visualization.HistogramVisualization import HistogramModule
@@ -20,8 +20,12 @@ def agent_portrayal(agent):
                  "Filled": "true",
                  "Layer": 0}
 
-    agent_prob = agent.probabilities
-    portrayal["Color"] = Color(rgb=[rgb / max(agent_prob) for rgb in agent_prob]).hex
+    if agent.strategy == "all_r":
+        portrayal["Color"] = "red"
+    if agent.strategy == "all_p":
+        portrayal["Color"] = "green"
+    if agent.strategy == "all_s":
+        portrayal["Color"] = "blue"
     if agent.strategy == "empty":
         portrayal["Color"] = "black"
 
@@ -29,13 +33,15 @@ def agent_portrayal(agent):
 
 
 def chart_populations(labels):
-    return ChartModule(labels, data_collector_name='datacollector_populations')
+    print(labels)
+    return ChartModule(labels, data_collector_name='datacollector_population')
 
 
 def chart_scores(labels):
-    for row in labels:
+    score_labels = copy.deepcopy(labels)
+    for row in score_labels:
         row["Label"] += " Scores"
-    return ChartModule(labels, data_collector_name='datacollector_scores')
+    return ChartModule(score_labels, data_collector_name='datacollector_score')
 
 
 def evolving_agents():
@@ -74,10 +80,10 @@ grid = CanvasGrid(agent_portrayal,
 model_name = "Rock Paper Scissors Simulator"
 model_type = RPSModel
 
-model_labels = [{"Label": "Pure Rock", "Color": "red"},
-                {"Label": "Pure Paper", "Color": "green"},
-                {"Label": "Pure Scissors", "Color": "blue"},
-                {"Label": "Empty", "Color": "black"}]
+model_labels = [{"Label": "Rock", "Color": "red"},
+                {"Label": "Paper", "Color": "green"},
+                {"Label": "Scissors", "Color": "blue"}]
+
 model_visualisation = [grid,
                        chart_populations(model_labels),
                        chart_scores(model_labels),

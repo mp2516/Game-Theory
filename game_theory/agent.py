@@ -30,9 +30,6 @@ class GameAgent(Agent):
         self.move = None
         self.next_move = None
 
-        self.probabilities = [1/3, 1/3, 1/3]
-        self.new_probabilities = [1/3, 1/3, 1/3]
-
         self.strategy = ""
         self.new_strategy = ""
         self.alive = True
@@ -49,28 +46,31 @@ class GameAgent(Agent):
     def kill_weak(self):
         if random.random() < self.model.probability_death and self.alive:
             self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
-            if all(self.strategy == neighbour.strategy for neighbour in self.neighbors) and self.model.kill_crowded:
-                self.alive = False
+            # if all(self.strategy == neighbour.strategy for neighbour in self.neighbors) and self.model.kill_crowded:
+            #     self.alive = False
 
-            elif self.total_score < self.model.cull_score:
+            if self.total_score < self.model.cull_score:
                 self.alive = False
 
     def reproduce_strong(self):
 
-
-        if random.random() < self.model.probability_adoption and not self.alive:
-            strongest_neighbour = self.neighbors[np.argmin(self.scores)]
-            logger.debug("The scores {} for agent {} with position {}".format(self.scores, self.unique_id, self.pos))
-            # if strongest_neighbour.total_score > self.total_score:
-            self.new_strategy = strongest_neighbour.strategy
-            # FIXME: mutation is occuring even in homogenous systems
-            self.model.num_evolving += 1
-            logger.debug(
-                "Old strategy: {}, new strategy: {}, mutation number: {}".format(self.strategy, self.new_strategy,
-                                                                                 self.model.num_evolving))
+        if not self.alive:
+            if random.random() < self.model.probability_adoption:
+                strongest_neighbour = self.neighbors[np.argmin(self.scores)]
+                logger.debug("The scores {} for agent {} with position {}".format(self.scores, self.unique_id, self.pos))
+                # if strongest_neighbour.total_score > self.total_score:
+                self.new_strategy = strongest_neighbour.strategy
+                # FIXME: mutation is occuring even in homogenous systems
+                self.model.num_evolving += 1
+                logger.debug(
+                    "{} was beaten by {} with a score of {} from position {}, (x, y) {} mutation number: {}".format(
+                        self.strategy, self.new_strategy, self.scores, np.argmin(self.scores), self.pos, self.model.num_evolving))
+                self.alive = True
+            else:
+                self.new_strategy = "empty"
         else:
             self.new_strategy = self.strategy
-            self.new_probabilities = self.probabilities
+            self.alive = True
 
 
     def exchange(self):
@@ -81,7 +81,6 @@ class GameAgent(Agent):
             random_neighbor.new_strategy = self.strategy
         else:
             self.new_strategy = self.strategy
-            self.new_probabilities = self.probabilities
 
     def evolve_strategy(self):
         self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
@@ -115,24 +114,16 @@ class GameAgent(Agent):
                 strongest_neighbour = self.neighbors[np.argmin(self.scores)]
                 logger.debug("The scores {} for agent {} with position {}".format(self.scores, self.unique_id, self.pos))
                 # if strongest_neighbour.total_score > self.total_score:
-                if self.model.game_mode == "Impure":
-                    for num, i in enumerate(self.probabilities):
-                        for j in strongest_neighbour.probabilities:
-                            # bad_agents probabilities will tend towards the probabilities of the strongest_neighbour
-                            # with the strength_of_adoption dictating how much it tends towards
-                            self.new_probabilities[num] = i + ((j - i) * self.model.strength_of_adoption)
 
-                elif self.model.game_mode == "Pure":
+                if self.model.game_mode == "Pure":
                     self.new_strategy = strongest_neighbour.strategy
                     # FIXME: mutation is occuring even in homogenous systems
                     self.model.num_evolving += 1
                     logger.debug("Old strategy: {}, new strategy: {}, mutation number: {}".format(self.strategy, self.new_strategy, self.model.num_evolving))
                 else:
                     self.new_strategy = self.strategy
-                    self.new_probabilities = self.probabilities
         else:
             self.new_strategy = self.strategy
-            self.new_probabilities = self.probabilities
 
 
     def reproduce(self):
@@ -150,11 +141,8 @@ class GameAgent(Agent):
                     random.choices(population=["all_r", "all_p", "all_s"], weights=[100, 100, 100], k=1))
             else:
                 self.new_strategy = self.strategy
-                self.new_probabilities = self.probabilities
         else:
             self.new_strategy = self.strategy
-            self.new_probabilities = self.probabilities
-
 
 
 class RPSAgent(GameAgent):
@@ -162,7 +150,7 @@ class RPSAgent(GameAgent):
     def __init__(self, pos, model):
         super().__init__(pos, model)
 
-        self.implement_pure_strategies()
+        self.implement_strategy()
 
     def increment_score(self):
         for num, neighbor in enumerate(self.model.grid.neighbor_iter(self.pos)):
@@ -172,19 +160,17 @@ class RPSAgent(GameAgent):
         self.total_score = sum(self.scores)
 
     def implement_strategy(self):
-        self.strategy = self.new_strategy
-        self.probabilities = self.new_probabilities
         if self.strategy == "all_r":
-            self.probabilities = [1, 0, 0]
             self.move = "R"
         elif self.strategy == "all_p":
-            self.probabilities = [0, 1, 0]
             self.move = "P"
         elif self.strategy == "all_s":
-            self.probabilities = [0, 0, 1]
             self.move = "S"
         elif self.strategy == "empty":
             self.move = "E"
+
+    def update_strategy(self):
+        self.strategy = self.new_strategy
 
 
 

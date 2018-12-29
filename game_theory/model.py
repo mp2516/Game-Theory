@@ -2,7 +2,7 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa import Model
 from mesa.time import RandomActivation
-from .agent import RPSAgent, PDAgent
+from .agent import RPSAgent
 import numpy as np
 import random
 from .logger import logger
@@ -80,8 +80,6 @@ class GameGrid(Model):
         self.step_num = 0
 
         self.num_moves_per_set = config['num_moves_per_set']
-        self.game_type = config['game_type']
-        self.game_mode = config['game_mode']
 
         self.initial_population_sizes = config['initial_population_sizes']
         self.biomes = config['biomes']
@@ -103,8 +101,8 @@ class GameGrid(Model):
         self.schedule = RandomActivation(self)
         self.running = True
 
-        self.datacollector_populations = DataCollector()
-        self.datacollector_probabilities = DataCollector()
+        # self.datacollector_populations = DataCollector()
+        # self.datacollector_probabilities = DataCollector()
 
         if self.probability_mutation > 0:
             self.num_mutating = 0
@@ -125,32 +123,22 @@ class GameGrid(Model):
         """
         Helper method to count agents with a given strategy in a given model.
         """
-        count = 0
+        count_pop = 0
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
-                count += 1
-        return count
-
-    @staticmethod
-    def count_probabilities(model, agent_probability_index):
-        """
-        Helper method to count trees in a given condition in a given model.
-        """
-        count = 0
-        for agent in model.schedule.agents:
-            count += agent.probabilities[agent_probability_index]
-        return count
+                count_pop += 1
+        return count_pop
 
     @staticmethod
     def count_scores(model, agent_strategy):
         """
-        Helper method to count trees in a given condition in a given model.
+        Helper method to count total scores in a given condition in a given model.
         """
-        count = 0
+        count_score = 0
         for agent in model.schedule.agents:
             if agent.strategy == agent_strategy:
-                count += agent.total_score
-        return count
+                count_score += agent.total_score
+        return count_score
 
 
 class RPSModel(GameGrid):
@@ -180,18 +168,16 @@ class RPSModel(GameGrid):
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
 
+        self.datacollector_population = DataCollector(
+            {"Rock": lambda m: self.count_populations(m, "all_r"),
+             "Paper": lambda m: self.count_populations(m, "all_p"),
+             "Scissors": lambda m: self.count_populations(m, "all_s")}
+        )
 
-
-        self.datacollector_populations = DataCollector(
-            {"Pure Rock": lambda m: self.count_populations(m, "all_r"),
-             "Pure Paper": lambda m: self.count_populations(m, "all_p"),
-             "Pure Scissors": lambda m: self.count_populations(m, "all_s")})
-             # "Empty": lambda m: self.count_populations(m, "empty")})
-
-        self.datacollector_scores = DataCollector(
-            {"Pure Rock Scores": lambda m: self.count_scores(m, "all_r"),
-             "Pure Paper Scores": lambda m: self.count_scores(m, "all_p"),
-             "Pure Scissors Scores": lambda m: self.count_scores(m, "all_s")}
+        self.datacollector_score = DataCollector(
+            {"Rock Scores": lambda m: self.count_scores(m, "all_r"),
+             "Paper Scores": lambda m: self.count_scores(m, "all_p"),
+             "Scissors Scores": lambda m: self.count_scores(m, "all_s")}
         )
 
         if self.probability_mutation > 0:
@@ -210,14 +196,13 @@ class RPSModel(GameGrid):
             self.num_mutating = 0
         self.num_evolving = 0
 
-        self.datacollector_populations.collect(self)
-
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
             agent.kill_weak()
         for agent in self.schedule.agents:
             agent.reproduce_strong()
+            agent.update_strategy()
             agent.implement_strategy()
         for agent in self.schedule.agents:
             agent.exchange()
@@ -226,7 +211,8 @@ class RPSModel(GameGrid):
             for player in self.crowded_players:
                 player.strategy = "empty"
 
-        self.datacollector_scores.collect(self)
+        self.datacollector_score.collect(self)
+        self.datacollector_population.collect(self)
 
         self.fraction_evolving = self.num_evolving / (self.dimension**2)
         self.datacollector_evolving_agents.collect(self)
