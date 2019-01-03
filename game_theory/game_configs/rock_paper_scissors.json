@@ -9,13 +9,11 @@
     "step": 1,
     "num_sims_per_interval": 100,
     "num_sim_batches": 10,
-    "num_steps": 50,
-    "histogram": false,
-    "line_graph": true
+    "num_steps": 300
   },
   "parameters": {
     "square": true,
-    "dimension": 20,
+    "dimension": 10,
     "height": 1,
     "width": 10,
     "pixel_dimension": 500,
@@ -23,7 +21,7 @@
     "pixel_width": 500,
     "periodic_BC": true,
     "epsilon": 1,
-    "cull_score": 1,
+    "cull_score": 0,
     "kill_crowded": false,
     "num_moves_per_set": 1,
     "initial_population_sizes": [
@@ -42,8 +40,8 @@
       "P",
       "S"
     ],
-    "probability_adoption": 1,
-    "probability_mutation": 0,
+    "probability_adoption": 0.9,
+    "probability_mutation": 0.01,
     "probability_exchange": 0,
     "probability_playing": 1,
     "probability_death": 1

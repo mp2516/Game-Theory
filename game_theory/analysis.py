@@ -10,7 +10,7 @@ from game_theory.logger import logger
 from tabulate import tabulate
 from tqdm import trange
 
-from game_theory.model import RPSModel, PDModel
+from game_theory.model import RPSModel
 
 
 def chunk_it(seq, num):
@@ -46,9 +46,6 @@ class BatchRunner:
         if self.config_model['probability_mutation'] > 0:
             self.all_mutating_data = None
 
-        self.histogram_bool = config_batchrunning['histogram']
-        self.line_graph_bool = config_batchrunning['line_graph']
-
         self.dependent = []
         self.dependent_error = []
         self.dependent_raw_data = []
@@ -58,22 +55,19 @@ class BatchRunner:
 
         self.num_steps = config_batchrunning['num_steps']
         self.transient_threshold = config_batchrunning['transient_threshold']
-        self.histogram_bool = config_batchrunning['histogram']
-        self.line_graph_bool = config_batchrunning['line_graph']
+
+        self.colour_scheme = {"Rock": "red", "Paper": "blue", "Scissors": "green"}
 
     def run_model(self):
         if self.variable_output:
             for variable in range(self.start, self.stop, self.step):
                 self.config_model[self.variable_name] = variable
                 for _ in trange(self.num_sims_per_interval):
-                    if self.config_model['game_type'] == "RPS":
-                        model = RPSModel(self.config_model)
-                    else:
-                        model = PDModel(self.config_model)
+                    model = RPSModel(self.config_model)
                     model.run(self.num_steps)
 
-                    self.all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-                    self.all_score_data = model.datacollector_scores.get_model_vars_dataframe()
+                    self.all_population_data = model.datacollector_population.get_model_vars_dataframe()
+                    self.all_score_data = model.datacollector_score.get_model_vars_dataframe()
                     self.all_evolving_data = model.datacollector_evolving_agents.get_model_vars_dataframe()
 
                     if self.config_model['probability_mutation'] > 0:
@@ -84,23 +78,19 @@ class BatchRunner:
                 self.dependent.append(self.calculate_dependent())
                 self.dependent_error.append(self.calculate_dependent_error())
 
-                if self.histogram_bool:
-                    self.histogram_data.append(self.dependent_raw_data)
+                self.histogram_data.append(self.dependent_raw_data)
 
-            if self.histogram_bool:
-                self.histogram_results()
+            self.histogram_results()
         else:
-            if self.config_model['game_type'] == "RPS":
-                model = RPSModel(self.config_model)
-            else:
-                model = PDModel(self.config_model)
+            model = RPSModel(self.config_model)
             model.run(self.num_steps)
 
-            self.all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-            self.all_score_data = model.datacollector_scores.get_model_vars_dataframe()
+            self.all_population_data = model.datacollector_population.get_model_vars_dataframe()
+            self.all_score_data = model.datacollector_score.get_model_vars_dataframe()
             self.all_evolving_data = model.datacollector_evolving_agents.get_model_vars_dataframe()
 
             self.ternary_plot(model)
+            self.fft_analysis()
 
 
     def plot_scatter(self):
@@ -116,59 +106,6 @@ class BatchRunner:
             self.num_steps) + 'n' + '_' + str(self.num_sims_per_interval) + 'sims'
         plt.savefig('graphs/batchruns/' + plot_name + '.png')
         plt.show()
-
-
-
-
-
-    # def run_model(self):
-    #     if batchrunning['variable_output']:
-    #         dependent = []
-    #         dependent_error = []
-    #         histogram_data = []
-    #         for variable in range(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
-    #             config[batchrunning['variable_name']] = variable
-    #             dependent_raw_data = []
-    #             for _ in trange(batchrunning['num_sims_per_interval']):
-    #                 if config['game_type'] == "RPS":
-    #                     model = RPSModel(config)
-    #                 else:
-    #                     model = PDModel(config)
-    #                 model.run(batchrunning['num_steps'])
-    #                 dependent_raw_data.append(
-    #                     RPSAnalysis.collect_dependent_raw_data(model, batchrunning['dependent_name']))
-    #             dependent.append(RPSAnalysis.calculate_dependent(dependent_raw_data, batchrunning['dependent_name']))
-    #             dependent_error.append(
-    #                 RPSAnalysis.calculate_dependent_error(dependent_raw_data, batchrunning['dependent_name'],
-    #                                                       batchrunning['num_sim_batches']))
-    #             if batchrunning['histogram']:
-    #                 histogram_data.append(dependent_raw_data)
-    #
-    #         if batchrunning['histogram']:
-    #             RPSAnalysis.histogram_results(histogram_data, batchrunning['num_steps'])
-    #
-    #         print('\n' + '-' * 30 + '\n Simulation Finished \n' + '-' * 30 + '\n')
-    #         print(tabulate(zip(dependent, dependent_error), headers=[str(batchrunning['dependent_name']), 'error']))
-    #         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
-    #         plt.figure()
-    #         plt.scatter(variable, dependent, c='b')
-    #         plt.errorbar(variable, dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
-    #         plt.xlabel(batchrunning['variable_name'])
-    #         plt.ylabel(batchrunning['dependent_name'])
-    #         plt.xlim([batchrunning['start'], batchrunning['stop']])
-    #         plt.ylim([0, 1.05])
-    #         plot_name = str(batchrunning['variable_name']) + '_' + str(batchrunning['dependent_name']) + '_' + str(
-    #             batchrunning['num_steps']) + 'n' + '_' + str(batchrunning['num_sims_per_interval']) + 'sims'
-    #         print(plot_name)
-    #         plt.savefig('graphs/batchruns/' + plot_name + '.png')
-    #         plt.show()
-    #
-    #     else:
-    #         if config['game_type'] == "RPS":
-    #             model = RPSModel(config)
-    #         else:
-    #             model = PDModel(config)
-    #         model.run(batchrunning['num_steps'])
 
     def collect_dependent_raw_data(self, model):
         self.all_population_data = model.datacollector_populations.get_model_vars_dataframe()
@@ -194,26 +131,46 @@ class BatchRunner:
 
     def calculate_extinction_time(self, model):
         # we only need to loop through one population data set
-        for population_data in self.all_population_data:
-            populations = self.all_population_data[population_data]
-            break
+        extinction_time = {}
+        for population_label in self.all_population_data:
+            population = self.all_population_data[population_label]
+            for step_num, i in enumerate(population):
+                if i == (model.dimension ** 2) or i == 0:
+                    # there is one homogenous population
+                    # if it is homogenous we can break out of the loop
+                    extinction_time[population_label] = step_num
+                    break
 
-        for step_num, i in enumerate(populations):
-            if i == (model.dimension ** 2) or i == 0:
-                # there is one homogenous population
-                # if it is homogenous we can break out of the loop
-                return step_num
-        return np.inf
+        return False, np.inf
+
+    def calculate_dominance_percentage_extinction(self, model):
+        extinction = False
+        for population_data_label in self.all_population_data:
+            population = self.all_population_data[population_data_label]
+            for step_num, i in enumerate(population):
+                if i == 0:
+                    extinction_step = step_num
+                    extinction = True
+                    break
+        if extinction:
+            reverse_population = population[0:extinction_step].reverse()
+            reverse_maximum_index = reverse_population.index(max(reverse_population))
+            maximum_index = extinction_step - reverse_maximum_index
+            percentage_dominance = population[maximum_index] / (model.dimension ** 2)
+            return percentage_dominance
+        else:
+            return None
+
+
+
 
     def calculate_stable_transient(self, model):
-        all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-        for population_data in all_population_data:
-            populations = all_population_data[population_data]
+        for population_data in self.all_population_data:
+            populations = self.all_population_data[population_data]
             for step_num, i in enumerate(populations):
-                if np.ceil(populations[0] * model.transient_threshold) >= populations[i]\
-                        or np.floor(populations[0] * (1 - model.transient_threshold)) <= populations[i]:
+                if np.ceil(populations[0] * self.transient_threshold) >= populations[i]\
+                        or np.floor(populations[0] * (1 - self.transient_threshold)) <= populations[i]:
                     return step_num
-
 
     def calculate_environment_death(self):
         for evolving_agents in self.all_evolving_data:
@@ -225,35 +182,35 @@ class BatchRunner:
         return np.inf
 
     def fft_analysis(self):
-        # all_population_data = model.datacollector_populations.get_model_vars_dataframe()
-        # surprisingly this iterates over columns, not rows
-        for population_data in self.all_population_data:
-            N = len(self.all_population_data[population_data])
-            print(N)
-            print(self.all_population_data[population_data])
-            t_axis = np.linspace(0.0, 1.0 / (2.0), (int(N) / 2))
-            y_axis = self.all_population_data[population_data] - np.mean(self.all_population_data[population_data])
-            y_axis_fft = scipy.fftpack.fft(y_axis)
-            y_corrected = 2 / N * np.abs(y_axis_fft[0:np.int(N / 4)])
-            t_corrected = t_axis[0:np.int(N / 4)]
+        for population_data_label in self.all_population_data:
+            color = self.colour_scheme[population_data_label]
+            population_data = self.all_population_data[population_data_label]
+            y_fft = 2 / self.num_steps\
+                          * np.abs(scipy.fftpack.fft(population_data - np.mean(population_data))
+                                   [0:np.int(self.num_steps / 4)])
+            t_corrected = np.linspace(0.0, 0.5, (self.num_steps / 2))[0:np.int(self.num_steps / 4)]
 
-            plt.figure(1)
-            plt.plot(t_corrected, y_corrected,
+            # plot the fourier transform
+            plt.figure(1, )
+            plt.plot(t_corrected, y_fft,
                      label='Dominant frequency = '
-                           + str(round(t_corrected[np.argmax(y_corrected)], 4))
+                           + str(round(t_corrected[np.argmax(y_fft)], 4))
                            + ' $set^(-1)$'
-                           + str(population_data))
+                           + str(population_data_label),
+                     color=color)
             plt.xlabel('Frequency (set^-1)')
             plt.ylabel('FT of Population')
             plt.legend(loc='best')
 
+            # plot the actual populations
             plt.figure(2, )
-            plt.plot(np.arange(N), self.all_population_data[population_data])
-            plt.xlabel('Set no')
+            plt.plot(np.arange(self.num_steps), population_data,
+                     label=str(population_data_label) + ' : ' + color,
+                     color=color)
+            plt.xlabel('Step Number')
             plt.ylabel('Population')
-
+            plt.legend(loc='best')
         plt.show()
-        print("Dominant frequency >> ", t_corrected[np.argmax(y_corrected)])
 
     def histogram(self, model):
         all_population_scores = model.datacollector_scores.get_model_vars_dataframe()
@@ -287,13 +244,8 @@ class BatchRunner:
                    row[1] / (model.height * model.width),
                    row[2] / (model.height * model.width)) for row in points]
         pp = pprint.PrettyPrinter(indent=4)
+        print("The normalised populations:")
         pp.pprint(points)
-
-        # for index, data in self.all_population_data.iterrows():
-        #     logger.error("Index: {}".format(index))
-        #     logger.error("Data: {}".format(data))
-        #     list_norm = [(i / (model.height * model.width)) for i in self.all_population_data[index]]
-        #     points = list(zip(list_norm))
 
         fig, tax = ternary.figure(scale=1.0)
         tax.boundary()

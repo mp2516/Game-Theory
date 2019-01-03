@@ -108,6 +108,8 @@ class GameGrid(Model):
             self.num_mutating = 0
             self.fraction_mutating = 0
 
+        self.num_dead = 0
+        self.num_dying = 0
         self.num_evolving = 0
         self.fraction_evolving = 0
         self.crowded_players = []
@@ -191,21 +193,32 @@ class RPSModel(GameGrid):
 
     def step(self):
         self.step_num += 1
+        logger.warn("STEP NUMBER: {} \n".format(self.step_num))
 
         if self.probability_mutation > 0:
             self.num_mutating = 0
         self.num_evolving = 0
+        self.num_dying = 0
 
         for agent in self.schedule.agents:
             agent.increment_score()
         for agent in self.schedule.agents:
             agent.kill_weak()
         for agent in self.schedule.agents:
+            logger.warn("\nAgent {} is being reproduced, mutated and updated".format(agent.unique_id))
             agent.reproduce_strong()
             agent.update_strategy()
             agent.implement_strategy()
         for agent in self.schedule.agents:
             agent.exchange()
+
+        logger.warn("\nThere are in total:"
+                     "\n{} agents dead"
+                     "\n{} agents evolving"
+                     "\n{} mutating"
+                     "\n{} who were below the cull threshold".format(
+            self.num_dead, self.num_evolving, self.num_mutating, self.num_dying
+        ))
 
         if self.kill_crowded:
             for player in self.crowded_players:
@@ -221,4 +234,4 @@ class RPSModel(GameGrid):
             self.fraction_mutating = self.num_mutating / (self.dimension ** 2)
             self.datacollector_mutating_agents.collect(self)
 
-        # logger.error(" " + "\n", color=41)
+        logger.error(" " + "\n", color=41)

@@ -6,7 +6,7 @@ import logaugment
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 
-LEVEL = 'ERROR'
+LEVEL = 'WARN'
 # noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
 logging.config.dictConfig({
     'version': 1,

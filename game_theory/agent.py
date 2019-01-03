@@ -50,28 +50,51 @@ class GameAgent(Agent):
             #     self.alive = False
 
             if self.total_score < self.model.cull_score:
+                self.model.num_dying += 1
                 self.alive = False
 
     def reproduce_strong(self):
-
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
+        logger.warn("Alive: {}"
+                    "\nStrategy: {}"
+                    "\nScores (total): {} {}".format(self.alive, self.strategy, self.scores, self.total_score))
         if not self.alive:
             if random.random() < self.model.probability_adoption:
-                strongest_neighbour = self.neighbors[np.argmin(self.scores)]
-                logger.debug("The scores {} for agent {} with position {}".format(self.scores, self.unique_id, self.pos))
-                # if strongest_neighbour.total_score > self.total_score:
-                self.new_strategy = strongest_neighbour.strategy
-                # FIXME: mutation is occuring even in homogenous systems
-                self.model.num_evolving += 1
-                logger.debug(
-                    "{} was beaten by {} with a score of {} from position {}, (x, y) {} mutation number: {}".format(
-                        self.strategy, self.new_strategy, self.scores, np.argmin(self.scores), self.pos, self.model.num_evolving))
+                if self.strategy == "empty":
+                    self.new_strategy = self.neighbors[np.argmax(
+                            [neighbor.total_score for neighbor in self.neighbors])].strategy
+                    logger.warn("Empty strategy adopting...")
+                    self.model.num_dead -= 1
+                else:
+                    # the strongest neighbour is that which beat self the most
+                    self.new_strategy = self.neighbors[np.argmin(self.scores)].strategy
+                    logger.warn("Dead agent adopting...")
                 self.alive = True
+                self.model.num_evolving += 1
             else:
                 self.new_strategy = "empty"
+                if self.strategy != "empty":
+                    logger.warn("Dead agent became empty...")
+                    self.model.num_dead += 1
+                else:
+                    logger.warn("Empty agent did not change its state...")
         else:
+            logger.warn("This agent did not change its strategy...")
             self.new_strategy = self.strategy
-            self.alive = True
 
+        if random.random() < self.model.probability_mutation:
+            available_strategies = [strategy for strategy in self.model.agent_strategies if
+                                    strategy != self.strategy]
+            self.new_strategy = random.choice(available_strategies)
+
+            if self.strategy == "empty":
+                self.model.num_dead -= 1
+                logger.warn("Dead agent mutating...")
+            else:
+                logger.warn("Agent mutating...")
+            self.model.num_mutating += 1
+
+        logger.warn("New Strategy: {}".format(self.new_strategy))
 
     def exchange(self):
         self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
@@ -81,69 +104,6 @@ class GameAgent(Agent):
             random_neighbor.new_strategy = self.strategy
         else:
             self.new_strategy = self.strategy
-
-    def evolve_strategy(self):
-        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
-
-        # mutate the agents with a probability
-        if random.random() <= self.model.probability_mutation:
-            if self.model.game_mode == "Pure":
-                available_strategies = [strategy for strategy in self.model.agent_strategies
-                                        if strategy != self.strategy]
-                self.new_strategy = random.choice(available_strategies)
-                self.model.num_mutating += 1
-            elif self.model.game_mode == "Impure":
-                # the larger the strength_of_mutation
-                # the smaller the weights which means a bigger variance on the initial probabilities
-                self.model.new_probabilities = np.random.dirichlet(
-                    [prob * (1/self.model.strength_of_mutation) for prob in self.probabilities])
-
-        elif random.random() < self.model.probability_exchange:
-            random_neighbor = random.choice([neighbor for neighbor in self.neighbors])
-            if not self.strategy == random_neighbor.strategy:
-                self.new_strategy = random_neighbor.strategy
-                random_neighbor.new_strategy = self.strategy
-
-        elif all(self.strategy == neighbour.strategy for neighbour in self.neighbors) and self.model.kill_crowded:
-            self.strategy = "empty"
-
-        # kill the weakest agents
-        elif self.total_score < self.model.cull_score:
-            # self.new_strategy = "empty"
-            if random.random() <= self.model.probability_adoption:
-                strongest_neighbour = self.neighbors[np.argmin(self.scores)]
-                logger.debug("The scores {} for agent {} with position {}".format(self.scores, self.unique_id, self.pos))
-                # if strongest_neighbour.total_score > self.total_score:
-
-                if self.model.game_mode == "Pure":
-                    self.new_strategy = strongest_neighbour.strategy
-                    # FIXME: mutation is occuring even in homogenous systems
-                    self.model.num_evolving += 1
-                    logger.debug("Old strategy: {}, new strategy: {}, mutation number: {}".format(self.strategy, self.new_strategy, self.model.num_evolving))
-                else:
-                    self.new_strategy = self.strategy
-        else:
-            self.new_strategy = self.strategy
-
-
-    def reproduce(self):
-        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
-        if not all(neighbour.strategy == "empty" for neighbour in self.neighbors):
-            neighbours_not_empty = [neighbour for neighbour in self.neighbors if neighbour.strategy != "empty"]
-            random.shuffle(neighbours_not_empty)
-            strongest_neighbour = neighbours_not_empty[np.argmin(self.score)]
-            random_neighbour = random.choice(neighbours_not_empty)
-            rand = random.random()
-            if self.strategy == "empty" and strongest_neighbour.total_score >= 0 and rand <= self.model.probability_adoption and rand > self.model.probability_mutation:
-                self.new_strategy = strongest_neighbour.strategy
-            elif self.strategy == "empty" and strongest_neighbour.total_score >= 0 and rand <= self.model.probability_adoption and rand <= self.model.probability_mutation:
-                self.new_strategy = random.choice(
-                    random.choices(population=["all_r", "all_p", "all_s"], weights=[100, 100, 100], k=1))
-            else:
-                self.new_strategy = self.strategy
-        else:
-            self.new_strategy = self.strategy
-
 
 class RPSAgent(GameAgent):
 
