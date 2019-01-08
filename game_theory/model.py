@@ -2,7 +2,7 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa import Model
 from mesa.time import RandomActivation
-from .agent import RPSAgent, PDAgent
+from .agent import RPSAgent
 import numpy as np
 import random
 from .logger import logger
@@ -18,34 +18,7 @@ def key(x, y):
         See: https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
     """
     return int(0.5 * (x + y) * (x + y + 1) + y)
-
-
-def biome_boundaries(initial_population_probabilities, width):
-    """
-    Args:
-        initial_population_probabilities: the proportion of the grid that is filled with each probability
-        dimension: the length along one edge of the grid
-    Returns:
-        A list of x values which indicate the boundaries of the biomes with the least possible error from the
-        initial_population_probabilities.
-    Notes:
-        This is a form of allocation problem, here I have used the algorithm called the Hungarian Algorithm
-        https://hackernoon.com/the-assignment-problem-calculating-the-minimum-matrix-sum-python-1bba7d15252d
-    """
-    exact_split = [(prob*width) for prob in initial_population_probabilities]
-    probs_round = [int(np.floor(split)) for split in exact_split]
-    remainder = [(exact_split[i] - prob_round) for (i, prob_round) in enumerate(probs_round)]
-    while sum(probs_round) < width:
-        index = int(np.argmax(remainder))
-        probs_round[index] += 1
-        remainder[index] = 0
-    probs_round.append(0)
-    probs_round.sort()
-    cumulative = np.cumsum(probs_round)
-    # this ensures that the strategy generation goes onto the last column in the grid
-    cumulative[-1] += 1
-    return cumulative
-
+    
 
 class GameGrid(Model):
     ''' Model class for iterated, spatial prisoner's dilemma model. '''
@@ -80,7 +53,7 @@ class GameGrid(Model):
             self.grid = SingleGrid(self.width, self.height, torus=self.periodic_BC)
             
 
-
+        self.dimension = config['dimension']
         self.step_num = 0
         self.num_mutating = 0
         self.fraction_mutating = 0
@@ -92,18 +65,17 @@ class GameGrid(Model):
 
         self.initial_population_sizes = config['initial_population_sizes']
         self.biomes = config['biomes']
-        if self.biomes:
-            self.biome_boundaries = biome_boundaries(self.initial_population_sizes, self.width)
 
         self.cull_score = config['cull_score']
         self.probability_adoption = config['probability_adoption']
-        self.strength_of_adoption = config['strength_of_adoption']
+#        self.reproduce_strongest = config['reproduce_strongest']
 
         self.probability_mutation = config['probability_mutation']
-        self.strength_of_mutation = config['strength_of_mutation']
 
         self.probability_exchange = config['probability_exchange']
+        self.exchange_multiple = config['exchange_multiple']
         self.probability_playing = config['probability_playing']
+        self.probability_death = config['probability_death']
 
         self.agent_strategies = config['agent_strategies']
         self.agent_moves = config['agent_moves']
@@ -157,50 +129,53 @@ class GameGrid(Model):
     @staticmethod
     def count_vortices(model):
         """
-        Helper method to count trees in a given condition in a given model.
+        Helper method to count vortices in a given condition in a given model.
         """
-        positions = []
         vortex_count = 0
-        agent_list = [agent for agent in model.schedule.agents]
         if model.periodic_BC:
             for agent in model.schedule.agents:
-                neighbor_list = [neighbor for neighbor in agent.neighbors]
-                if agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[3].strategy and neighbor_list[0].strategy != neighbor_list[3].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[1].strategy and neighbor_list[0].strategy != neighbor_list[1].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[5].strategy != neighbor_list[6].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[3].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[3].strategy != neighbor_list[5].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[4].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[4].strategy != neighbor_list[7].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and neighbor_list[1].strategy != neighbor_list[2].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[6].strategy != neighbor_list[7].strategy:
-                    vortex_count += 1
-                elif agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and agent.strategy != neighbor_list[4].strategy and neighbor_list[2].strategy != neighbor_list[4].strategy:
-                    vortex_count += 1
+                a = 1
+                n = 1
+                if all([neighbor.strategy != "empty" for neighbor in agent.neighbors]) and [neighbor.strategy for neighbor in agent.neighbors].count(agent.strategy) > a:# and all([[i.strategy for i in neighbor.neighbors].count(neighbor.strategy) > 1 for neighbor in agent.neighbors]):
+                    neighbor_list = [neighbor for neighbor in agent.neighbors]
+                    if agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[3].strategy and neighbor_list[0].strategy != neighbor_list[3].strategy and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[0].neighbors].count(neighbor_list[0].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[1].strategy and neighbor_list[0].strategy != neighbor_list[1].strategy and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[0].neighbors].count(neighbor_list[0].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[5].strategy != neighbor_list[6].strategy and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[5].neighbors].count(neighbor_list[5].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[3].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[3].strategy != neighbor_list[5].strategy and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[5].neighbors].count(neighbor_list[5].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[4].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[4].strategy != neighbor_list[7].strategy and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[7].neighbors].count(neighbor_list[7].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and neighbor_list[1].strategy != neighbor_list[2].strategy and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[2].neighbors].count(neighbor_list[2].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[6].strategy != neighbor_list[7].strategy and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[7].neighbors].count(neighbor_list[7].strategy) > n:
+                        vortex_count += 1
+                    elif agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and agent.strategy != neighbor_list[4].strategy and neighbor_list[2].strategy != neighbor_list[4].strategy and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[2].neighbors].count(neighbor_list[2].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n:
+                        vortex_count += 1
                     
         elif not model.periodic_BC:
             for agent in model.schedule.agents:
-                if agent.pos[0] != 0 and agent.pos[0] != model.dimension-1 and agent.pos[1] != 0 and agent.pos[1] != model.dimension-1:
+                a = 1
+                n = 1
+                if agent.pos[0] != 0 and agent.pos[0] != model.dimension-1 and agent.pos[1] != 0 and agent.pos[1] != model.dimension-1 and all([neighbor.strategy != "empty" for neighbor in agent.neighbors]) and [neighbor.strategy for neighbor in agent.neighbors].count(agent.strategy) > a:# and all([[i.strategy for i in neighbor.neighbors].count(neighbor.strategy) > 1 for neighbor in agent.neighbors]):
                     neighbor_list = [neighbor for neighbor in agent.neighbors]
-                    if agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[3].strategy and neighbor_list[0].strategy != neighbor_list[3].strategy:
+                    if agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[3].strategy and neighbor_list[0].strategy != neighbor_list[3].strategy and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[0].neighbors].count(neighbor_list[0].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[1].strategy and neighbor_list[0].strategy != neighbor_list[1].strategy:
+                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[0].strategy and agent.strategy != neighbor_list[1].strategy and neighbor_list[0].strategy != neighbor_list[1].strategy and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[0].neighbors].count(neighbor_list[0].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[5].strategy != neighbor_list[6].strategy:
+                    elif agent.strategy == neighbor_list[3].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[5].strategy != neighbor_list[6].strategy and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[5].neighbors].count(neighbor_list[5].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[3].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[3].strategy != neighbor_list[5].strategy:
+                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[3].strategy and agent.strategy != neighbor_list[5].strategy and neighbor_list[3].strategy != neighbor_list[5].strategy and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[3].neighbors].count(neighbor_list[3].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[5].neighbors].count(neighbor_list[5].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[4].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[4].strategy != neighbor_list[7].strategy:
+                    elif agent.strategy == neighbor_list[6].strategy and agent.strategy != neighbor_list[4].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[4].strategy != neighbor_list[7].strategy and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[7].neighbors].count(neighbor_list[7].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and neighbor_list[1].strategy != neighbor_list[2].strategy:
+                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and neighbor_list[1].strategy != neighbor_list[2].strategy and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[2].neighbors].count(neighbor_list[2].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[6].strategy != neighbor_list[7].strategy:
+                    elif agent.strategy == neighbor_list[4].strategy and agent.strategy != neighbor_list[6].strategy and agent.strategy != neighbor_list[7].strategy and neighbor_list[6].strategy != neighbor_list[7].strategy and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[6].neighbors].count(neighbor_list[6].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[7].neighbors].count(neighbor_list[7].strategy) > n:
                         vortex_count += 1
-                    elif agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and agent.strategy != neighbor_list[4].strategy and neighbor_list[2].strategy != neighbor_list[4].strategy:
+                    elif agent.strategy == neighbor_list[1].strategy and agent.strategy != neighbor_list[2].strategy and agent.strategy != neighbor_list[4].strategy and neighbor_list[2].strategy != neighbor_list[4].strategy and [neighbor.strategy for neighbor in neighbor_list[1].neighbors].count(neighbor_list[1].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[2].neighbors].count(neighbor_list[2].strategy) > n and [neighbor.strategy for neighbor in neighbor_list[4].neighbors].count(neighbor_list[4].strategy) > n:
                         vortex_count += 1
 
 
@@ -244,13 +219,6 @@ class RPSModel(GameGrid):
                  "Empty": lambda m: self.count_populations(m, "empty")})
             self.datacollector_populations.collect(self)
 
-        elif self.game_mode == "Impure":
-            self.datacollector_probabilities = DataCollector(
-                {"Rock Probabilities": lambda m: (a.probabilities[0] for a in m.schedule.agents),
-                 "Paper Probabilities": lambda m: (a.probabilities[1] for a in m.schedule.agents),
-                 "Scissors Probabilities": lambda m: (a.probabilities[2] for a in m.schedule.agents)})
-            self.datacollector_probabilities.collect(self)
-
         self.datacollector_scores = DataCollector(
             {"Pure Rock Scores": lambda m: self.count_scores(m, "all_r"),
              "Pure Paper Scores": lambda m: self.count_scores(m, "all_p"),
@@ -262,16 +230,21 @@ class RPSModel(GameGrid):
         )
 
         self.datacollector_no_vortices = DataCollector(
-            {"Number of Vortices": lambda m: self.count_vortices(m)}
-        )
+            {"Number of Vortices": lambda m: self.count_vortices(m)})
+        self.datacollector_populations.collect(self)
+
         
     def step(self):
         self.step_num += 1
         self.num_mutating = 0
         
-#        if self.step_num % 2 == 1:
+#        if self.step_num % 3 == 0:
+#            for agent in self.schedule.agents:
+#                agent.set_score_to_zero()
 #            for agent in self.schedule.agents:
 #                agent.increment_score()
+#            for agent in self.schedule.agents:
+#                agent.sum_scores()
 #            for agent in self.schedule.agents:
 #                agent.kill_weak()
 ##            for agent in self.schedule.agents:
@@ -279,11 +252,19 @@ class RPSModel(GameGrid):
 ##            for agent in self.schedule.agents:
 ##                agent.kill_crowded()
 ##
-#        elif self.step_num % 2 == 0:
+#            for agent in self.schedule.agents:
+#                agent.implement_strategy()
+#        if self.step_num % 3 == 1:
 #            for agent in self.schedule.agents:
 #                agent.reproduce()
-#        for agent in self.schedule.agents:
-#            agent.implement_strategy()
+#            for agent in self.schedule.agents:
+#                agent.implement_strategy()
+#                
+#        elif self.step_num % 3 == 2:
+#            for agent in self.schedule.agents:
+#                agent.exchange()
+#            for agent in self.schedule.agents:
+#                agent.implement_strategy()
 
 #        for agent in self.schedule.agents:
 #            agent.increment_score()
@@ -294,24 +275,64 @@ class RPSModel(GameGrid):
 #        for agent in self.schedule.agents:
 #            agent.exchange()
 
-        for agent in self.schedule.agents:
-             agent.increment_score()
-        for agent in self.schedule.agents:
-             agent.identify_crowded()
-        for agent in self.schedule.agents:
+#        random_interaction = random.choice(random.choices(population=['play', 'reproduce', 'move'], weights=[100, 100, 100], k=1))
+#        if random_interaction = play:
+#        for agent in self.schedule.agents:
+#            agent.set_score_to_zero()
+#        for agent in self.schedule.agents:
+#            agent.increment_score()
+#        for agent in self.schedule.agents:
+#            agent.sum_scores()
+#        for agent in self.schedule.agents:
+#            random_interaction = random.choice(random.choices(population=[kill_weak(), reproduce(), exchange()], weights=[100, 100, 100], k=1))
+#            agent.random_interaction
+#        for agent in self.schedule.agents:
+#             agent.implement_strategy()
+
+#        for agent in self.schedule.agents:
+#            agent.set_score_to_zero()
+#        for agent in self.schedule.agents:
+#            if random.random() < 0.333:
+#                agent.increment_score()
+#        for agent in self.schedule.agents:
+#            agent.sum_scores()
+#        for agent in self.schedule.agents:
+#             agent.kill_weak()
+#        for agent in self.schedule.agents:
+#             agent.implement_strategy()
+#        for agent in self.schedule.agents:
+#            if random.random() < 0.333:
+#                agent.reproduce()
+#        for agent in self.schedule.agents:
+#             agent.implement_strategy()
+#        for i in range(self.exchange_multiple):
+#            for agent in self.schedule.agents:
+#                if random.random() < 0.333:
+#                    agent.exchange()
+
+        agent_list = [i for i in self.schedule.agents]
+        random.shuffle(agent_list)
+        for agent in agent_list:
+            agent.set_score_to_zero()
+        for agent in agent_list:
+            agent.increment_score()
+        for agent in agent_list:
+            agent.sum_scores()
+#        for agent in self.schedule.agents:
+#             agent.identify_crowded()
+        for agent in agent_list:
              agent.kill_weak()
-        for agent in self.schedule.agents:
+        for agent in agent_list:
              agent.implement_strategy()
-        for agent in self.schedule.agents:
+        for agent in agent_list:
              agent.reproduce()
-        for agent in self.schedule.agents:
+        for agent in agent_list:
              agent.implement_strategy()
-        for agent in self.schedule.agents:
-             agent.exchange()
-        for agent in self.schedule.agents:
-             agent.implement_strategy()
-        agent_list = [agent for agent in self.schedule.agents]
-        agent_list2 = [agent.unique_id for agent in self.schedule.agents]
+        for i in range(self.exchange_multiple):
+            for agent in agent_list:
+                 agent.exchange()
+#        for agent in self.schedule.agents:
+#             agent.implement_strategy()
 #        print(agent_list[0].pos, agent_list[1].pos, agent_list[2].pos, agent_list[3].pos, agent_list[24].pos, agent_list[25].pos)
 #        print(agent_list2[0], agent_list2[1], agent_list2[2], agent_list2[3], agent_list2[24], agent_list2[25])
 ##        neighbors = [neighbor for neighbor in agent_list[0].grid.get_neighbors(self.pos, moore=self.model.diagonal_neighbours)]
@@ -320,55 +341,9 @@ class RPSModel(GameGrid):
 #        print([agent_list[262].neighbors])
 #        print(agent[262].pos, "Neighbour positions ->", [neighbor.pos for neighbor in agent_list[262].neighbors])
         
-        if self.game_mode == "Pure":
-            self.datacollector_populations.collect(self)
-        elif self.game_mode == "Impure":
-            self.datacollector_probabilities.collect(self)
+        self.datacollector_populations.collect(self)
 #        self.fraction_mutating = self.num_mutating / (self.dimension**2)
-        self.datacollector_scores.collect(self)
+#        self.datacollector_scores.collect(self)
         self.datacollector_no_vortices.collect(self)
 #        self.datacollector_mutating_agents.collect(self)
         # logger.error(" " + "\n", color=41)
-
-
-class PDModel(GameGrid):
-    def __init__(self, config):
-        super().__init__(config)
-        self.payoff = {("C", "C"): 1,
-                       ("C", "D"): 0,
-                       ("D", "C"): 2,
-                       ("D", "D"): 0}
-
-        # Create agents
-        for x in range(self.dimension):
-            for y in range(self.dimension):
-                agent = PDAgent([x,y], self)
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
-
-        self.datacollector_populations = DataCollector(
-            {"cooperating": lambda m: self.count_populations(m, "all_c"),
-             "defecting": lambda m: self.count_populations(m, "all_d"),
-             "tit_for_tat": lambda m: self.count_populations(m, "tit_for_tat"),
-             "spiteful": lambda m: self.count_populations(m, "spiteful"),
-             "random": lambda m: self.count_populations(m, "random")})
-        self.datacollector_populations.collect(self)
-
-        self.datacollector_scores = DataCollector({"cooperating Scores": lambda m: self.count_scores(m, "all_c"),
-                                                   "defecting Scores": lambda m: self.count_scores(m, "all_d"),
-                                                   "tit_for_tat Scores": lambda m: self.count_scores(m, "tit_for_tat"),
-                                                   "spiteful Scores": lambda m: self.count_scores(m, "spiteful"),
-                                                   "random Scores": lambda  m: self.count_scores(m, "random")})
-
-    def step(self):
-        self.schedule.step()
-        self.step_num += 1
-        move_count = 0
-        for i in range(self.num_moves_per_set):
-            for agent in self.schedule.agents:
-                agent.increment_score(move_count)
-        for agent in self.schedule.agents:
-            agent.evolve_strategy()
-        for agent in self.schedule.agents:
-            agent.implement_strategy()
-        self.datacollector_populations.collect(self)

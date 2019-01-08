@@ -2,7 +2,7 @@ from mesa.visualization.modules import CanvasGrid
 from game_theory.visualization.ChartVisualization import ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from .config import Config
-from .model import PDModel, RPSModel
+from .model import RPSModel
 from colour import Color
 from .logger import logger
 from game_theory.visualization.HistogramVisualization import HistogramModule
@@ -61,6 +61,8 @@ grid = CanvasGrid(agent_portrayal,
 # it is essential the label matches that collected by the datacollector
 if model_config.parameters['game_type'] == "RPS":
     if model_config.parameters['game_mode'] == "Pure":
+        number_of_vortices = ChartModule([{"Label": "Number of Vortices", "Color": "red"}],
+                                         data_collector_name='datacollector_no_vortices')
         chart_populations = ChartModule([{"Label": "Pure Rock", "Color": "red"},
                                          {"Label": "Pure Paper", "Color": "green"},
                                          {"Label": "Pure Scissors", "Color": "blue"},
@@ -77,7 +79,7 @@ if model_config.parameters['game_type'] == "RPS":
         #                       model_config.pixel_dimension, 200)
 
         server = ModularServer(RPSModel,
-                               [grid, chart_populations, chart_scores],
+                               [grid, number_of_vortices, chart_populations],
                                "Rock Paper Scissors Simulator",
                                {"config": model_config.parameters})
     else:
