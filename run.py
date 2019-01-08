@@ -5,11 +5,11 @@ import sys
 
 from mesa.batchrunner import BatchRunner
 from tqdm import trange
-from game_theory.model import RPSModel, PDModel
+from game_theory.model import RPSModel
 from game_theory.config import Config
 import numpy as np
 import matplotlib.pyplot as plt
-from game_theory.analysis import collect_dependent_raw_data, calculate_dependent, calculate_dependent_error, histogram_results, count_vortices, fft_analysis, vortex_number_graph, vortex_number_ave, dominant_freq
+from game_theory.analysis import * #branched, is_dead, collect_dependent_raw_data, calculate_dependent, calculate_dependent_error, histogram_results, count_vortices, fft_analysis, vortex_number_graph, vortex_number_ave, dominant_freq
 
 import statistics
 
@@ -19,7 +19,10 @@ def run_model(config, batchrunning):
         dependent = []
         dependent_error = []
         histogram_data = []
+        all_dependent_raw = []
         for variable in np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step']):
+            #np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
+            #np.logspace(batchrunning['start'], batchrunning['stop'], batchrunning['intervals'])
             config[batchrunning['variable_name']] = variable
             dependent_raw_data = []
             for num in trange(batchrunning['num_sims_per_interval']):
@@ -27,33 +30,72 @@ def run_model(config, batchrunning):
                     model = RPSModel(config)
                 else:
                     model = PDModel(config)
-                model.run(batchrunning['num_steps'])
+                for i in range(batchrunning['num_steps']):
+                    model.step()
+                    if is_dead(model) or is_marching(model):
+                        break
+#                    if batchrunning['dependent_name'] == "bifurcation_time" and branched(model):
+#                        break
+
+#                model.run(batchrunning['num_steps'])
+#                dependent_raw_data.append(collect_dependent_raw_data(model, batchrunning['dependent_name']))
+#                if batchrunning['dependent_name'] == "bifurcation_time" and not is_dead(model):
+#                    dependent_raw_data.append(collect_dependent_raw_data(model, batchrunning['dependent_name']))
+#                else:
                 dependent_raw_data.append(collect_dependent_raw_data(model, batchrunning['dependent_name']))
-            print("Number of Vortices ->", count_vortices(model))
-            vortex_number_graph(model)
-            vortex_number_ave(model)
-            dominant_freq(model)
-            dependent.append(calculate_dependent(dependent_raw_data, batchrunning['dependent_name']))
-            dependent_error.append(calculate_dependent_error(dependent_raw_data,
+                print('\n', dependent_raw_data)
+#                print("Number of Vortices ->", count_vortices(model))
+#                vortex_number_graph(model)
+#                fft_analysis(model)
+#                print(dependent_raw_data)
+#            vortex_number_ave(model)
+#                print(dominant_freq(model))
+#            print(dependent_raw_data)
+            all_dependent_raw.append(dependent_raw_data)
+            print(all_dependent_raw)
+#            dependent_mean = statistics.mean(dependent_raw_data)
+#            dependent_sd = statistics.stdev(dependent_raw_data)
+            dependent_raw_data_tidy = [i for i in dependent_raw_data if i >= 0.07]
+            dependent.append(calculate_dependent(dependent_raw_data_tidy, batchrunning['dependent_name']))
+            dependent_error.append(calculate_dependent_error(dependent_raw_data_tidy,
                                                              batchrunning['dependent_name'],
                                                              batchrunning['num_sim_batches']))
-        #     histogram_data.append(dependent_raw_data)
-        # histogram_results(histogram_data, batchrunning['num_steps'])
+            variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
+            print(variable.tolist(), '\n length', len(variable.tolist()))
+            print(dependent, '\n length', len(dependent))
+            print(dependent_error)
+            
+#            histogram_data.append(dependent_raw_data)
+#        histogram_results(histogram_data, batchrunning['num_steps'])
+            plt.figure(figsize=(10,5))
+            plt.scatter(variable[:len(dependent)], dependent, c='b')
+            plt.errorbar(variable[:len(dependent)], dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
+            plt.xlabel(batchrunning['variable_name'])
+            plt.ylabel(batchrunning['dependent_name'])
+#            plt.xlim([batchrunning['start'] - 0.01, batchrunning['stop']])
+            plt.xscale('log')
+            plt.grid(True)
+            plt.show()
+#            plt.ylim([0, batchrunning['num_steps']])
+            # plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
 
-        plt.show()
         print(dependent_raw_data)
         variable = np.arange(batchrunning['start'], batchrunning['stop'], batchrunning['step'])
-        print(variable)
-        print(dependent)
-        print(dependent_error)
-        plt.figure()
+        print(str(batchrunning['variable_name']) + ' =', variable.tolist())
+        print(str(batchrunning['dependent_name']) + ' =', dependent)
+        print(str(batchrunning['dependent_name']) + '_sd' + ' =', dependent_error)
+        print(histogram_data)
+        plt.figure(figsize=(10,5))
         plt.scatter(variable, dependent, c='b')
         plt.errorbar(variable, dependent, yerr=dependent_error, elinewidth=0.2, ecolor='b')
         plt.xlabel(batchrunning['variable_name'])
         plt.ylabel(batchrunning['dependent_name'])
-        plt.xlim([batchrunning['start'] - 0.5, batchrunning['stop']])
-        plt.ylim([0, batchrunning['num_steps']])
+#        plt.xlim([batchrunning['start'] - 0.0001, batchrunning['stop']])
+        plt.grid(True)
+        plt.xscale('log')
+#        plt.ylim([0, batchrunning['num_steps']])
         # plt.savefig('graphs/batchruns/dimension_extinction_probability.png')
+        plt.rc('font', size=14)
         plt.show()
         fft_analysis(model)
         vortex_number_graph(model)
@@ -76,7 +118,7 @@ with open(file_name) as d:
 
 if model_config.parameters['simulation']:
     from game_theory.server import server
-    server.port = 8522  # The default
+    server.port = 8523  # The default
     server.launch()
 else:
     run_model(model_config.parameters, model_config.batchrunning)
