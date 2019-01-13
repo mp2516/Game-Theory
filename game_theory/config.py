@@ -1,7 +1,5 @@
 import json
 
-from .logger import logger
-
 
 class Config(object):
     """
@@ -18,4 +16,4 @@ class Config(object):
             data: Load file data directly into config object.
         """
         self.__dict__ = json.loads(data)
-        logger.critical("Loaded config successfully".format())
+        print("Loaded config successfully")

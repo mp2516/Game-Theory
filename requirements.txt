@@ -6,3 +6,5 @@ matplotlib
 python-ternary
 tqdm
 tabulate
+logaugment
+simplejson

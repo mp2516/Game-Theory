@@ -104,9 +104,8 @@ class GameGrid(Model):
         # self.datacollector_populations = DataCollector()
         # self.datacollector_probabilities = DataCollector()
 
-        if self.probability_mutation > 0:
-            self.num_mutating = 0
-            self.fraction_mutating = 0
+        self.num_mutating = 0
+        self.fraction_mutating = 0
 
         self.num_dead = 0
         self.num_dying = 0
@@ -207,6 +206,7 @@ class RPSModel(GameGrid):
         for agent in self.schedule.agents:
             logger.warn("\nAgent {} is being reproduced, mutated and updated".format(agent.unique_id))
             agent.reproduce_strong()
+        for agent in self.schedule.agents:
             agent.update_strategy()
             agent.implement_strategy()
         for agent in self.schedule.agents:
@@ -234,4 +234,4 @@ class RPSModel(GameGrid):
             self.fraction_mutating = self.num_mutating / (self.dimension ** 2)
             self.datacollector_mutating_agents.collect(self)
 
-        logger.error(" " + "\n", color=41)
+        logger.warn(" " + "\n", color=41)

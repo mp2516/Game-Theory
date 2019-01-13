@@ -1,12 +1,16 @@
 import datetime
 import logging.config
-
+from .config import Config
 import logaugment
+
+file_name = "game_theory/game_configs/rock_paper_scissors.json"
+with open(file_name) as d:
+    model_config = Config(d.read())
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 
-LEVEL = 'WARN'
+LEVEL = model_config.logger_level
 # noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
 logging.config.dictConfig({
     'version': 1,

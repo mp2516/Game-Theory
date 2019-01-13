@@ -1,33 +1,34 @@
 {
   "batchrunning": {
-    "variable_output": false,
-    "variable_name": "dimension",
-    "dependent_name": "population",
+    "variable_output": true,
+    "variable_name": "width",
+    "dependent_name": "extinction_probability",
     "transient_threshold": 0.1,
-    "start": 2,
-    "stop": 6,
+    "start": 45,
+    "stop": 46,
     "step": 1,
-    "num_sims_per_interval": 100,
+    "histogram_values": [45],
+    "num_sims_per_interval": 500,
     "num_sim_batches": 10,
-    "num_steps": 300
+    "num_steps": 30
   },
   "parameters": {
     "square": true,
     "dimension": 10,
     "height": 1,
-    "width": 10,
+    "width": 20,
     "pixel_dimension": 500,
-    "pixel_height": 50,
+    "pixel_height": 200,
     "pixel_width": 500,
     "periodic_BC": true,
     "epsilon": 1,
-    "cull_score": 0,
+    "cull_score": 1,
     "kill_crowded": false,
     "num_moves_per_set": 1,
     "initial_population_sizes": [
-      0.333,
-      0.334,
-      0.333
+      0.3333,
+      0.3334,
+      0.3333
     ],
     "biomes": false,
     "agent_strategies": [
@@ -40,12 +41,13 @@
       "P",
       "S"
     ],
-    "probability_adoption": 0.9,
-    "probability_mutation": 0.01,
+    "probability_adoption": 1,
+    "probability_mutation": 0,
     "probability_exchange": 0,
     "probability_playing": 1,
     "probability_death": 1
   },
   "simulation": true,
-  "rate_equations": false
+  "rate_equations": false,
+  "logger_level": "ERROR"
 }

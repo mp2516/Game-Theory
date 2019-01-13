@@ -57,7 +57,8 @@ class GameAgent(Agent):
         self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True)
         logger.warn("Alive: {}"
                     "\nStrategy: {}"
-                    "\nScores (total): {} {}".format(self.alive, self.strategy, self.scores, self.total_score))
+                    "\nPosition: {}"
+                    "\nScores (total): {} {}".format(self.alive, self.strategy, self.pos, self.scores, self.total_score))
         if not self.alive:
             if random.random() < self.model.probability_adoption:
                 if self.strategy == "empty":
@@ -68,6 +69,7 @@ class GameAgent(Agent):
                 else:
                     # the strongest neighbour is that which beat self the most
                     self.new_strategy = self.neighbors[np.argmin(self.scores)].strategy
+                    logger.warn("Strategy of all neighbours {}".format([neighbor.strategy for neighbor in self.neighbors]))
                     logger.warn("Dead agent adopting...")
                 self.alive = True
                 self.model.num_evolving += 1
