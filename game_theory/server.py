@@ -67,7 +67,7 @@ else:
     model_height = model_config['height']
     model_width = model_config['width']
     model_pixel_width = model_config['pixel_dimension']
-    model_pixel_height = model_pixel_width / model_width
+    model_pixel_height = (model_pixel_width / model_width) * model_height
 
 grid = CanvasGrid(agent_portrayal,
                   model_width,

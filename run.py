@@ -14,6 +14,9 @@ if __name__ == '__main__':
         from rate_equations.solve_rates import rate_solver
         # rate_equation()
         rate_solver(0.01)
+    elif model_config.network_interaction_scale:
+        from rate_equations.network_interaction_scale import interaction_scale
+        interaction_scale()
     else:
         from game_theory.analysis import BatchRunner
         analysis = BatchRunner(model_config.batchrunning, model_config.parameters)

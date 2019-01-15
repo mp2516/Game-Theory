@@ -1,32 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b6a6ab10-70d2-412f-b219-1c2a481edd50" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/06_11_2018_Ternary_11x11_47_steps.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/agent.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/analysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/game_configs/prisoners_dilemma.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/server.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game_theory/simple_continuous_canvas.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+    <list default="true" id="b6a6ab10-70d2-412f-b219-1c2a481edd50" name="Default Changelist" comment="Mutations on a model level">
+      <change afterPath="$PROJECT_DIR$/rate_equations/network_interaction_scale.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/GameTheory.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GameTheory.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/run.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/sim/model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/utils/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/visualisation/SimpleContinuousModule.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/visualisation/server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game-Theory-Sim/visualisation/simple_continuous_canvas.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_theory/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_theory/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphs/batchrun_data.txt" beforeDir="false" afterPath="$PROJECT_DIR$/graphs/batchrun_data.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,71 +22,80 @@
     <session id="-1537923317">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="26" />
+          <entry key="project.closed" value="65" />
           <entry key="project.open.time.0" value="4" />
-          <entry key="project.open.time.1" value="5" />
-          <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.12" value="3" />
-          <entry key="project.open.time.16" value="1" />
+          <entry key="project.open.time.1" value="6" />
+          <entry key="project.open.time.10" value="5" />
+          <entry key="project.open.time.11" value="8" />
+          <entry key="project.open.time.12" value="8" />
+          <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.15" value="2" />
+          <entry key="project.open.time.16" value="3" />
           <entry key="project.open.time.17" value="2" />
           <entry key="project.open.time.18" value="1" />
-          <entry key="project.open.time.2" value="2" />
-          <entry key="project.open.time.20" value="1" />
-          <entry key="project.open.time.24" value="1" />
-          <entry key="project.open.time.3" value="2" />
-          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.2" value="4" />
+          <entry key="project.open.time.20" value="3" />
+          <entry key="project.open.time.23" value="2" />
+          <entry key="project.open.time.24" value="2" />
+          <entry key="project.open.time.3" value="3" />
+          <entry key="project.open.time.38" value="1" />
+          <entry key="project.open.time.4" value="4" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.6" value="1" />
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="4" />
-          <entry key="project.open.time.9" value="4" />
-          <entry key="project.opened" value="36" />
+          <entry key="project.open.time.6" value="2" />
+          <entry key="project.open.time.7" value="2" />
+          <entry key="project.open.time.8" value="9" />
+          <entry key="project.open.time.9" value="8" />
+          <entry key="project.opened" value="82" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="gitignore" value="1" />
+          <entry key="gitignore" value="2" />
           <entry key="ini" value="1" />
-          <entry key="js" value="2" />
-          <entry key="json" value="2" />
-          <entry key="md" value="2" />
-          <entry key="py" value="21" />
-          <entry key="txt" value="2" />
+          <entry key="js" value="8" />
+          <entry key="json" value="9" />
+          <entry key="md" value="5" />
+          <entry key="png" value="12" />
+          <entry key="py" value="50" />
+          <entry key="txt" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JSON" value="2" />
-          <entry key="JavaScript" value="2" />
-          <entry key="Markdown" value="2" />
-          <entry key="PLAIN_TEXT" value="4" />
-          <entry key="Python" value="21" />
+          <entry key="Image" value="81" />
+          <entry key="JSON" value="16" />
+          <entry key="JavaScript" value="13" />
+          <entry key="Markdown" value="8" />
+          <entry key="PLAIN_TEXT" value="12" />
+          <entry key="Python" value="99" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dummy" value="16" />
+          <entry key="dummy" value="30" />
           <entry key="ini" value="52" />
-          <entry key="js" value="50" />
-          <entry key="json" value="627" />
-          <entry key="md" value="390" />
-          <entry key="py" value="25736" />
-          <entry key="txt" value="1179" />
+          <entry key="js" value="184" />
+          <entry key="json" value="2408" />
+          <entry key="md" value="805" />
+          <entry key="py" value="46935" />
+          <entry key="txt" value="1635" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Ini" value="52" />
-          <entry key="JSON" value="627" />
-          <entry key="JavaScript" value="50" />
-          <entry key="Markdown" value="390" />
-          <entry key="PLAIN_TEXT" value="1195" />
-          <entry key="Python" value="25736" />
+          <entry key="JSON" value="4052" />
+          <entry key="JavaScript" value="184" />
+          <entry key="Markdown" value="805" />
+          <entry key="PLAIN_TEXT" value="2083" />
+          <entry key="Python" value="66425" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
         <counts>
           <entry key="git.branch.create.new" value="1" />
+          <entry key="git.branch.merge" value="1" />
         </counts>
       </usages-collector>
     </session>
@@ -128,83 +121,57 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/game_theory/server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="6" lean-forward="true" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/run.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="39" column="50" selection-start-line="39" selection-start-column="50" selection-end-line="39" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game_theory/agent.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1598">
-              <caret line="98" column="56" selection-start-line="98" selection-start-column="56" selection-end-line="98" selection-end-column="56" />
-              <folding>
-                <element signature="e#0#22#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game_theory/simple_continuous_canvas.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game_theory/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1683">
-              <caret line="106" column="23" selection-start-line="106" selection-start-column="23" selection-end-line="106" selection-end-column="23" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/game_theory/config.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/requirements.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+            <state relative-caret-position="68">
+              <caret line="12" column="18" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/height_extinction_probability_30n_300sims_1-10-1.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_578_500n_cull1.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_21n_200sims_10-100-10.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_200sims.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_8n_20000sims_6-8-1.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_678_500n.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_678_2000n.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_578_200n_cull1.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphs/batchruns/height_extinction_probability_50n_100sims_1-10-1.png">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -220,9 +187,28 @@
     <findStrings>
       <find>height</find>
       <find>EXCLUDE_LIST</find>
+      <find>self.pos</find>
+      <find>3</find>
+      <find>probability_of</find>
+      <find>all_s</find>
+      <find>all_s was beaten by all_r</find>
+      <find>all_r was beaten by all_s</find>
+      <find>all_p was beaten by all_r</find>
+      <find>all_r was beaten by all_p</find>
+      <find>all_r was beaten by all_r</find>
+      <find>all_s was beaten by all_s</find>
+      <find>all_p was beaten by all_s</find>
+      <find>all_s was beaten by all_p</find>
+      <find>3, 6</find>
+      <find>2, 4</find>
+      <find>7, 7</find>
+      <find>to empty</find>
+      <find>Dead Agent adopting</find>
+      <find>false</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
+    <option name="UPDATE_TYPE" value="MERGE" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
@@ -241,30 +227,58 @@
         <option value="$PROJECT_DIR$/Game-Theory-Sim/run.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/model.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/sim/agent.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/requirements.txt" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/agent.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/server.py" />
         <option value="$PROJECT_DIR$/Game-Theory-Sim/model.py" />
         <option value="$PROJECT_DIR$/game_theory/rps.ini" />
-        <option value="$PROJECT_DIR$/game_theory/config.py" />
         <option value="$PROJECT_DIR$/game_theory/SimpleContinuousModule.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/ModularVisualization.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/game_theory/game_configs/prisoners_dilemma.json" />
+        <option value="$PROJECT_DIR$/game_theory/histogram_module.js" />
+        <option value="$PROJECT_DIR$/game_theory/HistogramModule.py" />
+        <option value="$PROJECT_DIR$/game_theory/visualization/ChartVisualization.py" />
+        <option value="$PROJECT_DIR$/game_theory/visualization/ChartModule.js" />
+        <option value="$PROJECT_DIR$/game_theory/visualization/histogram_module.js" />
+        <option value="$PROJECT_DIR$/game_theory/visualization/HistogramVisualization.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/rate_equations/basic_rate_equations.py" />
+        <option value="$PROJECT_DIR$/rate_equations/solve_rates.py" />
+        <option value="$PROJECT_DIR$/graphs/plotter.py" />
+        <option value="$PROJECT_DIR$/game_theory/prime_number_test.py" />
+        <option value="$PROJECT_DIR$/game_theory/config.py" />
+        <option value="$PROJECT_DIR$/game_theory/logger.py" />
         <option value="$PROJECT_DIR$/game_theory/model.py" />
         <option value="$PROJECT_DIR$/game_theory/agent.py" />
-        <option value="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/rate_equations/network_interaction_scale.py" />
         <option value="$PROJECT_DIR$/game_theory/server.py" />
+        <option value="$PROJECT_DIR$/game_theory/analysis.py" />
+        <option value="$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-15" />
-    <option name="y" value="-15" />
-    <option name="width" value="3234" />
-    <option name="height" value="1734" />
+    <option name="x" value="270" />
+    <option name="y" value="282" />
+    <option name="width" value="1309" />
+    <option name="height" value="691" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Buildout</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -275,13 +289,39 @@
         <subPane>
           <expand>
             <path>
-              <item name="Game-Theory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Game-Theory" type="462c0819:PsiDirectoryNode" />
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Game-Theory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Game-Theory" type="462c0819:PsiDirectoryNode" />
-              <item name="Game-Theory-Sim" type="462c0819:PsiDirectoryNode" />
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
+              <item name="game_theory" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
+              <item name="game_theory" type="462c0819:PsiDirectoryNode" />
+              <item name="game_configs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
+              <item name="graphs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
+              <item name="graphs" type="462c0819:PsiDirectoryNode" />
+              <item name="batchruns" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GameTheory" type="462c0819:PsiDirectoryNode" />
+              <item name="rate_equations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GameTheory" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
@@ -291,13 +331,19 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Triton-Tinder-Bot" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../3rdYearLab" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory\game_theory\visualization" />
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory\rate_equations" />
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory\game_theory\visualisation" />
       <recent name="C:\Users\18072\PycharmProjects\GameTheory" />
       <recent name="C:\Users\18072\PycharmProjects\GameTheory\Game-Theory-Sim" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\18072\PycharmProjects\GameTheory\game_theory" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -312,7 +358,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Run">
+    <configuration name="Plotting" type="PythonConfigurationType" factoryName="Python">
+      <module name="GameTheory" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\18072\anaconda\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/graphs" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/graphs/plotter.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Run" type="PythonConfigurationType" factoryName="Python">
       <module name="GameTheory" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -355,6 +422,10 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.Plotting" />
+      <item itemvalue="Python.Run" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -451,7 +522,91 @@
       <option name="project" value="LOCAL" />
       <updated>1542283573551</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Introduced Biomes and mutation">
+      <created>1543499820169</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1543499820169</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Mutations on a model level">
+      <created>1543936325543</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1543936325543</updated>
+    </task>
+    <task id="LOCAL-00015" summary="DataCollector implemented">
+      <created>1544117164167</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1544117164167</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Batchrunning fully implemented. Set the variable and the dependent and then the graph of the two will be automatically generated.">
+      <created>1544182806141</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1544182806141</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Added additional batch-running capability and exchange() and kill_crowded() methods.">
+      <created>1544629563657</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1544629563658</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Batchrunning for extinction probability against linearly varying dimension.">
+      <created>1544661342944</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1544661342945</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Batchrun graphs and additional data analysis">
+      <created>1544731957159</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1544731957159</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Reorganised server file to run any combination of interactive graphs.">
+      <created>1545149499722</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1545149499723</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Removed unused PD and RPS Impure code. Made analysis file part of the class structure">
+      <created>1545916151682</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1545916151682</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Oversensitive mutations in this version, tried to implement more natural cycles.">
+      <created>1546122826333</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1546122826335</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Added better documentation">
+      <created>1546543048704</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1546543048704</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Advanced batchrunning analysis">
+      <created>1547412669217</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1547412669218</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TodoView">
@@ -464,20 +619,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="83" y="-8" width="1845" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4973545" visible="true" weight="0.16126901" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4973545" visible="true" weight="0.32374102" />
       <window_info id="Structure" order="1" sideWeight="0.5026455" side_tool="true" weight="0.24960254" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49920508" weight="0.32827735" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.67808217" visible="true" weight="0.27353463" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39964476" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49920508" weight="0.3253638" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.67808217" visible="true" weight="0.1443406" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.31392932" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.035523977" />
-      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49947312" weight="0.20043337" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.067567565" />
+      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49947312" weight="0.19933555" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.3219178" side_tool="true" weight="0.18418202" />
       <window_info anchor="bottom" id="Python Console" order="10" />
@@ -503,116 +658,264 @@
     <MESSAGE value="Added plotting capabilities and batch-running in run.py" />
     <MESSAGE value="Debugged to visualise imperfect strategies" />
     <MESSAGE value="Merge remote-tracking branch 'origin/master' into Richard&#10;&#10;# Conflicts:&#10;#&#9;Game-Theory-Sim/sim/model.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/master' into Richard&#10;&#10;# Conflicts:&#10;#&#9;Game-Theory-Sim/sim/model.py" />
+    <MESSAGE value="Introduced Biomes and mutation" />
+    <MESSAGE value="Mutations on a model level" />
+    <MESSAGE value="DataCollector implemented" />
+    <MESSAGE value="Batchrunning fully implemented. Set the variable and the dependent and then the graph of the two will be automatically generated." />
+    <MESSAGE value="Added additional batch-running capability and exchange() and kill_crowded() methods." />
+    <MESSAGE value="Batchrunning for extinction probability against linearly varying dimension." />
+    <MESSAGE value="Batchrun graphs and additional data analysis" />
+    <MESSAGE value="Reorganised server file to run any combination of interactive graphs." />
+    <MESSAGE value="Removed unused PD and RPS Impure code. Made analysis file part of the class structure" />
+    <MESSAGE value="Oversensitive mutations in this version, tried to implement more natural cycles." />
+    <MESSAGE value="Added better documentation" />
+    <MESSAGE value="Advanced batchrunning analysis" />
+    <option name="LAST_COMMIT_MESSAGE" value="Advanced batchrunning analysis" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/graphs/plotter.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/tornado/netutil.py" />
-    <entry file="file://$USER_HOME$/anaconda/Lib/types.py" />
-    <entry file="file://$USER_HOME$/OneDrive/Documents/Academic/University/Physics/3rd_Year/Project/Examples/mesa/examples/hex_snowflake/Readme.md" />
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/evolution/evolve.py" />
-    <entry file="file://$PROJECT_DIR$/game_theory/rps.ini" />
-    <entry file="file://$PROJECT_DIR$/game_theory/SimpleContinuousModule.py" />
-    <entry file="file://$USER_HOME$/Triton-Tinder-Bot/tinder_bot.py" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/game_theory/visualization/ChartVisualization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
+        <state relative-caret-position="578">
+          <caret line="35" column="9" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/logger.py">
+    <entry file="file://$PROJECT_DIR$/game_theory/visualization/simple_continuous_canvas.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
-        </state>
+        <state relative-caret-position="-272" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/visualization/ChartModule.js" />
+    <entry file="file://$PROJECT_DIR$/game_theory/prime_number_test.py" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="187">
-            <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <first_editor relative-caret-position="680">
+            <caret line="40" column="18" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="100" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/ModularVisualization.py" />
-    <entry file="file://$USER_HOME$/anaconda/Lib/site-packages/mesa/visualization/UserParam.py" />
-    <entry file="file://$PROJECT_DIR$/run.py">
+    <entry file="file://$PROJECT_DIR$/game_theory/visualization/HistogramVisualization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="39" column="50" selection-start-line="39" selection-start-column="50" selection-end-line="39" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/agent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1598">
-          <caret line="98" column="56" selection-start-line="98" selection-start-column="56" selection-end-line="98" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/simple_continuous_canvas.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1683">
-          <caret line="106" column="23" selection-start-line="106" selection-start-column="23" selection-end-line="106" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="5" column="93" selection-start-line="5" selection-start-column="93" selection-end-line="5" selection-end-column="93" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game_theory/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_50sims_2-10-2.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_50sims_2-20-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/Histogram_extinction_probability_20n_100sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/Histogram_extinction_probability_20n_50sims_[0.5, 1.0, 1.5, 2.0]_values2-20-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/agent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+        <state relative-caret-position="1513">
+          <caret line="93" column="53" selection-start-line="93" selection-start-column="53" selection-end-line="93" selection-end-column="53" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json">
+    <entry file="file://$PROJECT_DIR$/game_theory/logger.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        <state relative-caret-position="1003">
+          <caret line="62" column="22" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Game-Theory-Sim/sim/model.py">
+    <entry file="file://$PROJECT_DIR$/game_theory/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+        <state relative-caret-position="2414">
+          <caret line="149" column="49" selection-start-line="149" selection-start-column="49" selection-end-line="149" selection-end-column="49" />
           <folding>
             <element signature="e#0#45#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/plotter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rate_equations/solve_rates.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="4" selection-start-line="4" selection-end-line="34" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="27" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rate_equations/basic_rate_equations.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="40" column="29" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rate_equations/network_interaction_scale.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="23" lean-forward="true" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchrun_data.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_10n_20000sims_8-10-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_5n_20000sims_4-6-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_60sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_100sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_600sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_16n_2000sims_2-32-2.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/Histogram_extinction_probability_16n_2000sims_[]_values2-32-2.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/game_theory/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="6" lean-forward="true" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+        <state relative-caret-position="306">
+          <caret line="66" column="41" lean-forward="true" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="263">
+          <caret line="260" column="67" selection-start-line="260" selection-start-column="67" selection-end-line="260" selection-end-column="67" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_50n_100sims_10-100-5.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_5n_3000sims_3-5-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_5n_6000sims_4-6-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/dimension_extinction_probability_cull1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/environment_death_cull_score_-3_3_100sim_40n.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/dimension_extinction_probability_30n_10sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/dimension_extinction_probability_50n_100sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/dimension_extinction_probability.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/dimension_extinction_probability_n30_sim100_1_12.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/extinction_cull_score_-3_3_100m_40n.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/height_extinction_probability_16n_200sims_1-11-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/height_extinction_probability_50n_100sims_1-10-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/height_extinction_probability_30n_300sims_1-10-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_578_200n_cull1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_678_2000n.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_678_500n.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/histogram_578_500n_cull1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_21n_200sims_10-100-10.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_20n_200sims.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/batchruns/width_extinction_probability_8n_20000sims_6-8-1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game_theory/game_configs/rock_paper_scissors.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="12" column="18" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
         </state>
       </provider>
     </entry>

@@ -1,16 +1,16 @@
 {
   "batchrunning": {
-    "variable_output": true,
-    "variable_name": "width",
+    "variable_output": false,
+    "variable_name": "probability_mutation",
     "dependent_name": "extinction_probability",
     "transient_threshold": 0.1,
-    "start": 45,
-    "stop": 46,
-    "step": 1,
-    "histogram_values": [45],
-    "num_sims_per_interval": 500,
+    "start": 0.0,
+    "stop": 0.01,
+    "step": 0.001,
+    "histogram_values": [0.001, 0.002, 0.003],
+    "num_sims_per_interval": 10,
     "num_sim_batches": 10,
-    "num_steps": 30
+    "num_steps": 100
   },
   "parameters": {
     "square": true,
@@ -18,17 +18,15 @@
     "height": 1,
     "width": 20,
     "pixel_dimension": 500,
-    "pixel_height": 200,
-    "pixel_width": 500,
     "periodic_BC": true,
     "epsilon": 1,
     "cull_score": 1,
     "kill_crowded": false,
     "num_moves_per_set": 1,
     "initial_population_sizes": [
-      0.3333,
-      0.3334,
-      0.3333
+      0.33333,
+      0.33333,
+      0.33334
     ],
     "biomes": false,
     "agent_strategies": [
@@ -47,7 +45,8 @@
     "probability_playing": 1,
     "probability_death": 1
   },
-  "simulation": true,
+  "simulation": false,
   "rate_equations": false,
+  "network_interaction_scale": false,
   "logger_level": "ERROR"
 }

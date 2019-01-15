@@ -55,6 +55,7 @@ class BatchRunner:
         self.dependent_error = []
         self.dependent_raw_data = []
         self.histogram_data = []
+        self.ternary_data = []
 
         self.variable = np.arange(self.start, self.stop, self.step)
 
@@ -84,6 +85,7 @@ class BatchRunner:
                         self.all_mutating_data = model.datacollector_mutating_agents.get_model_vars_dataframe()
 
                     self.dependent_raw_data.append(self.collect_dependent_raw_data(model))
+                    self.collect_ternary_data(model)
 
                 self.dependent.append(self.calculate_dependent())
                 self.dependent_error.append(self.calculate_dependent_error())
@@ -100,6 +102,7 @@ class BatchRunner:
             logger.error(tabulate(zip(self.variable, self.dependent, self.dependent_error),
                                  headers=[self.variable_name, self.dependent_name, self.dependent_name + ' error']))
 
+            self.ternary_plot()
             self.plot_scatter()
             self.histogram_extinction_time()
 
@@ -116,7 +119,8 @@ class BatchRunner:
             self.all_score_data = model.datacollector_score.get_model_vars_dataframe()
             self.all_evolving_data = model.datacollector_evolving_agents.get_model_vars_dataframe()
 
-            self.ternary_plot(model)
+            self.collect_ternary_data(model)
+            self.ternary_plot()
             self.fft_analysis()
             self.pie_chart()
             self.histogram_scores(model)
@@ -171,7 +175,7 @@ class BatchRunner:
         p, pcov = scipy.optimize.curve_fit(lambda t, a, b: a*np.exp(b*t), self.variable, self.dependent, p0=(1, -0.1))
         perr = np.sqrt(np.diag(pcov))
         x = np.arange(self.start, self.stop, (self.step / 10))
-        ax.plot(x, p[0]*np.exp(x*p[1]), color='green')
+        # ax.plot(x, p[0]*np.exp(x*p[1]), color='green')
         plt.xlabel(self.variable_name)
         plt.ylabel(self.dependent_name)
         plt.xlim([self.start, self.stop])
@@ -252,27 +256,22 @@ class BatchRunner:
         for population_data_label in self.all_population_data:
             color = self.colour_scheme[population_data_label]
             population_data = self.all_population_data[population_data_label]
-            y_fft = 2 / self.num_steps\
+            y_fft = (2 / self.num_steps\
                           * np.abs(scipy.fftpack.fft(population_data - np.mean(population_data))
-                                   [0:np.int(self.num_steps / 4)])
+                                   [0:np.int(self.num_steps / 4)]))
             t_corrected = np.linspace(0.0, 0.5, (self.num_steps / 2))[0:np.int(self.num_steps / 4)]
 
             # plot the fourier transform
             plt.figure(self.figure_num, )
             self.figure_num += 1
-            plt.plot(t_corrected, y_fft,
-                     label='Dominant frequency = '
-                           + str(round(t_corrected[np.argmax(y_fft)], 4))
-                           + ' $set^(-1)$'
-                           + str(population_data_label),
-                     color=color)
-            plt.xlabel('Frequency (set^-1)')
-            plt.ylabel('FT of Population')
+            plt.plot(t_corrected, y_fft)
+            logger.error('Dominant frequency = {}'.format(str(round(t_corrected[np.argmax(y_fft)], 4))))
+            plt.xlabel('Frequency')
+            plt.ylabel('Fourier Transform of Population')
             plt.legend(loc='best')
 
             # plot the actual populations
-            plt.figure(self.figure_num, )
-            self.figure_num += 1
+            plt.figure(7)
             plt.plot(np.arange(self.num_steps), population_data,
                      label=str(population_data_label) + ' : ' + color,
                      color=color)
@@ -280,29 +279,26 @@ class BatchRunner:
             plt.ylabel('Population')
             plt.legend(loc='best')
 
-    def ternary_plot(self, model):
+    def collect_ternary_data(self, model):
         points = self.all_population_data.values
         points.tolist()
-        points = [(row[0] / (model.height * model.width),
-                   row[1] / (model.height * model.width),
+        points = [(row[0] / (model.height * model.width), row[1] / (model.height * model.width),
                    row[2] / (model.height * model.width)) for row in points]
-        pp = pprint.PrettyPrinter(indent=4)
-        print("The normalised populations:")
-        pp.pprint(points)
+        self.ternary_data.append(points)
 
+    def ternary_plot(self):
         fig, tax = ternary.figure(scale=1.0)
-        tax.boundary()
         tax.gridlines(multiple=0.1, color="black")
-        tax.set_title("Populations", fontsize=20)
-        tax.left_axis_label("Scissors", fontsize=20)
-        tax.right_axis_label("Paper", fontsize=20)
-        tax.bottom_axis_label("Rock", fontsize=20)
-
-        tax.plot(points, linewidth=2.0, label="Curve")
+        # tax.set_title("Populations", fontsize=30)
+        tax.left_axis_label("Scissors", fontsize=15)
+        tax.right_axis_label("Paper", fontsize=15)
+        tax.bottom_axis_label("Rock", fontsize=15)
+        for data in self.ternary_data:
+            tax.plot(data, linewidth=2.0, label=str(data[0]))
         tax.ticks(axis='lbr', multiple=0.2, linewidth=1, tick_formats="%.1f")
 
         tax.clear_matplotlib_ticks()
-        tax.legend()
+            # tax.legend()
         tax.show()
 
     def pie_chart(self):
